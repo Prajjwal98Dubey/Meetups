@@ -2,7 +2,7 @@ import { FaLock, FaGoogle, FaEnvelope } from "react-icons/fa";
 import AuthSideBar from "../components/AuthSideBar";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { loginUser } from "../firebase/authentication";
+import { googleSignIn, loginUser } from "../firebase/authentication";
 import toast from "react-hot-toast";
 import { AUTH_LOADER_ICON } from "../icons/icons";
 
@@ -98,6 +98,14 @@ const Login = () => {
             <div className="flex space-x-4">
               <button
                 type="button"
+                onClick={async () => {
+                  try {
+                    await googleSignIn();
+                    navigate("/");
+                  } catch {
+                    toast.error("Something went Wrong !!!");
+                  }
+                }}
                 className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 py-2 rounded-lg hover:bg-red-100 transition-all"
               >
                 <FaGoogle /> Google
