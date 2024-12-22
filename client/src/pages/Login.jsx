@@ -1,9 +1,10 @@
 import { FaLock, FaGoogle, FaEnvelope } from "react-icons/fa";
 import AuthSideBar from "../components/AuthSideBar";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { googleSignIn, loginUser } from "../firebase/authentication";
 import toast from "react-hot-toast";
+import UserInfoContext from "../contexts/UserInfoContext";
 import { AUTH_LOADER_ICON } from "../icons/icons";
 
 const Login = () => {
@@ -11,6 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUserInfo } = useContext(UserInfoContext);
 
   const handleLoginUser = async (e) => {
     e.preventDefault();
@@ -100,7 +102,8 @@ const Login = () => {
                 type="button"
                 onClick={async () => {
                   try {
-                    await googleSignIn();
+                    let userDetails = await googleSignIn();
+                    setUserInfo({ ...userDetails });
                     navigate("/");
                   } catch {
                     toast.error("Something went Wrong !!!");
