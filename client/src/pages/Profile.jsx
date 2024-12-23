@@ -3,8 +3,7 @@ import DEFAULT_USER from "../icons/default_user.png";
 import { LOGOUT_ICON } from "../icons/icons";
 import { useContext, useEffect } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { getUserDetails } from "../helpers/dbFunctions";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -13,15 +12,16 @@ const Profile = () => {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
   useEffect(() => {
-    const getUserInfo = async () => {
-      const user = auth.currentUser;
-      console.log("current user ", auth.currentUser);
-      if (user) {
-        const userDetails = await getUserDetails(user.email);
-        setUserInfo({ ...userDetails });
-      } else {
-        console.log("user is not coming ... ");
-      }
+    const getUserInfo = () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUserInfo({
+            user_name: user.displayName,
+            user_email: user.email,
+            user_photo: user.photoURL,
+          });
+        } 
+      });
     };
     if (Object.keys(userInfo).length === 0) {
       getUserInfo();

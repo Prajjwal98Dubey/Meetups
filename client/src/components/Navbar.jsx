@@ -1,11 +1,27 @@
 import { Link } from "react-router-dom";
 import DEFAULT_USER from "../icons/default_user.png";
 import { checkUserAuth } from "../helpers/checkAuth";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebaseConfig";
 
 const Navbar = () => {
-  const { userInfo } = useContext(UserInfoContext);
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  useEffect(() => {
+    const getUserDetails = () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUserInfo({
+            user_name: user.displayName,
+            user_email: user.email,
+            user_photo: user.photoURL,
+          });
+        }
+      });
+    };
+    if (Object.keys(userInfo).length === 0) getUserDetails();
+  }, [userInfo]);
   return (
     <div className="h-fit p-2 w-full flex justify-around relative">
       <div className="flex justify-center items-center w-1/3 ">
