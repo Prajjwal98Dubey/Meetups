@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AuthSideBar from "../components/AuthSideBar";
 import { FaUser, FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { googleSignIn, registerUser } from "../firebase/authentication";
 import { AUTH_LOADER_ICON } from "../icons/icons";
+import UserInfoContext from "../contexts/UserInfoContext";
 
 const Register = () => {
   const [userName, setUserName] = useState("");
@@ -12,6 +13,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { setUserInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
   const handleRegisterUser = async (e) => {
     e.preventDefault();
@@ -21,7 +23,8 @@ const Register = () => {
       return toast.error("Password do not match", { duration: 1500 });
     try {
       setIsLoading(true);
-      await registerUser(email, password);
+      const userDetails = await registerUser(userName, email, password);
+      setUserInfo({ ...userDetails });
       navigate("/");
       setIsLoading(false);
     } catch {

@@ -7,20 +7,18 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { getUserDetails } from "../helpers/dbFunctions";
 
 const Profile = () => {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
   useEffect(() => {
     const getUserInfo = () => {
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
-          setUserInfo({
-            user_name: user.displayName,
-            user_email: user.email,
-            user_photo: user.photoURL,
-          });
-        } 
+          let userDetails = await getUserDetails(user.email);
+          setUserInfo({ ...userDetails });
+        }
       });
     };
     if (Object.keys(userInfo).length === 0) {

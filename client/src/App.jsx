@@ -7,6 +7,7 @@ const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Feeds = lazy(() => import("./pages/Feeds"));
 function App() {
   return (
     <>
@@ -48,6 +49,14 @@ const appRouter = createBrowserRouter([
     element: (
       <Suspense fallback={<LazyLoader />}>
         <Profile />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/feeds",
+    element: (
+      <Suspense fallback={<LazyLoader />}>
+        <Feeds />
       </Suspense>
     ),
   },

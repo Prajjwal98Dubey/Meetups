@@ -6,29 +6,34 @@ import {
 } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "./firebaseConfig";
-import { isUserExist } from "../helpers/dbFunctions";
+import { getUserDetails, isUserExist } from "../helpers/dbFunctions";
 
 export const loginUser = async (email, password) => {
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    localStorage.setItem("meet-auth", JSON.stringify(userCredential.user));
+    await signInWithEmailAndPassword(auth, email, password);
+    const userDetails = await getUserDetails(email);
+    localStorage.setItem("meet-auth", JSON.stringify(userDetails));
+    return userDetails;
   } catch (error) {
     throw new Error(error);
   }
 };
 
-export const registerUser = async (email, password) => {
+export const registerUser = async (userName, email, password) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
-    localStorage.setItem("meet-auth", JSON.stringify(userCredential.user));
+    const userDetails = {
+      user_name: userName,
+      user_email: userCredential.user.email,
+      user_photo: "",
+    };
+    await addDoc(collection(db, "meet_users"), userDetails);
+    localStorage.setItem("meet-auth", JSON.stringify(userDetails));
+    return userDetails;
   } catch (error) {
     throw new Error(error);
   }

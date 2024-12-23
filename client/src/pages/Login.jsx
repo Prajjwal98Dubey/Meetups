@@ -19,7 +19,8 @@ const Login = () => {
     if (!email || !password) return alert("Enter all mandatory fields...");
     try {
       setIsLoading(true);
-      await loginUser(email, password);
+      const userDetails = await loginUser(email, password);
+      setUserInfo({ ...userDetails });
       setIsLoading(false);
       navigate("/");
     } catch {
