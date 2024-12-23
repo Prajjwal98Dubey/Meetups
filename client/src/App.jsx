@@ -8,6 +8,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Feeds = lazy(() => import("./pages/Feeds"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
 function App() {
   return (
     <>
@@ -57,6 +58,14 @@ const appRouter = createBrowserRouter([
     element: (
       <Suspense fallback={<LazyLoader />}>
         <Feeds />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/edit_profile",
+    element: (
+      <Suspense fallback={<LazyLoader />}>
+        <EditProfile />
       </Suspense>
     ),
   },

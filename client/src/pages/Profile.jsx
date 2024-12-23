@@ -5,7 +5,7 @@ import { useContext, useEffect } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getUserDetails } from "../helpers/dbFunctions";
 
@@ -63,7 +63,7 @@ const Profile = () => {
                     </p>
                   </div>
                   <div className="flex gap-4 mt-4 sm:mt-0">
-                    <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-bold">
                       Follow
                     </button>
                     <button
@@ -207,10 +207,11 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      <button className="fixed bottom-8 right-8 w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-blue-600 transition">
-        <FaEdit className="w-6 h-6" />
-      </button>
+      <Link to="/edit_profile">
+        <button className="fixed bottom-8 right-8 w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-blue-600 transition">
+          <FaEdit className="w-6 h-6" />
+        </button>
+      </Link>
     </div>
   );
 };

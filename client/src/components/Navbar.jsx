@@ -5,22 +5,20 @@ import { useContext, useEffect } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
+import { getUserDetails } from "../helpers/dbFunctions";
 
 const Navbar = () => {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   useEffect(() => {
-    const getUserDetails = () => {
-      onAuthStateChanged(auth, (user) => {
+    const getUserInfo = () => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
-          setUserInfo({
-            user_name: user.displayName,
-            user_email: user.email,
-            user_photo: user.photoURL,
-          });
+          const userDetails = await getUserDetails(user.email);
+          setUserInfo({ ...userDetails });
         }
       });
     };
-    if (Object.keys(userInfo).length === 0) getUserDetails();
+    if (Object.keys(userInfo).length === 0) getUserInfo();
   }, [userInfo]);
   return (
     <div className="h-fit p-2 w-full flex justify-around relative">
