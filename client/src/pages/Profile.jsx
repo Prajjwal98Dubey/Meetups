@@ -1,4 +1,9 @@
-import { FaMapMarkerAlt, FaEnvelope, FaLink, FaEdit } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaEdit,
+  FaPlus,
+} from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { LOGOUT_ICON } from "../icons/icons";
 import { useContext, useEffect } from "react";
@@ -58,9 +63,11 @@ const Profile = () => {
                     <h1 className="text-3xl font-bold">
                       {userInfo.user_name ? userInfo.user_name : ""}
                     </h1>
-                    <p className="text-gray-600">
-                      @johndoe • Full Stack Developer
-                    </p>
+                    {userInfo.user_profession && (
+                      <p className="text-gray-600">
+                        {userInfo.user_profession}
+                      </p>
+                    )}
                   </div>
                   <div className="flex gap-4 mt-4 sm:mt-0">
                     <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-bold">
@@ -111,15 +118,14 @@ const Profile = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="font-semibold mb-4">Contact Info</h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-gray-600">
-                  <FaMapMarkerAlt /> New York, USA
-                </div>
+                {userInfo.user_location && (
+                  <div className="flex items-center gap-3 text-gray-600">
+                    <FaMapMarkerAlt /> {userInfo.user_location}
+                  </div>
+                )}
                 <div className="flex items-center gap-3 text-gray-600">
                   <FaEnvelope />{" "}
                   {userInfo.user_email ? userInfo.user_email : ""}
-                </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <FaLink /> website.com
                 </div>
               </div>
             </div>
@@ -128,17 +134,8 @@ const Profile = () => {
           <div className="lg:col-span-6">
             <div className="bg-white rounded-xl shadow-sm mb-6">
               <div className="flex overflow-x-auto">
-                <button className="flex-1 px-6 py-4 text-blue-500 border-b-2 border-blue-500">
+                <button className="flex-1 px-6 py-4 text-red-500 font-bold text-xl cursor-default">
                   Timeline
-                </button>
-                <button className="flex-1 px-6 py-4 text-gray-500 hover:text-gray-700">
-                  About
-                </button>
-                <button className="flex-1 px-6 py-4 text-gray-500 hover:text-gray-700">
-                  Friends
-                </button>
-                <button className="flex-1 px-6 py-4 text-gray-500 hover:text-gray-700">
-                  Photos
                 </button>
               </div>
             </div>
@@ -169,44 +166,13 @@ const Profile = () => {
               ))}
             </div>
           </div>
-
-          <div className="lg:col-span-3 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">Friends</h3>
-                <button className="text-blue-500 text-sm">View All</button>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {[1, 2, 3, 4, 5, 6].map((friend) => (
-                  <img
-                    key={friend}
-                    src={DEFAULT_USER}
-                    alt=""
-                    className="rounded-lg w-full h-20 object-cover"
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">Photos</h3>
-                <button className="text-blue-500 text-sm">View All</button>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {[1, 2, 3, 4, 5, 6].map((photo) => (
-                  <img
-                    key={photo}
-                    src="https://via.placeholder.com/100"
-                    alt=""
-                    className="rounded-lg w-full h-20 object-cover"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
+      <Link to="/edit_profile">
+        <button className="fixed bottom-28 right-8 w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-blue-600 transition">
+          <FaPlus className="w-6 h-6" />
+        </button>
+      </Link>
       <Link to="/edit_profile">
         <button className="fixed bottom-8 right-8 w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-blue-600 transition">
           <FaEdit className="w-6 h-6" />

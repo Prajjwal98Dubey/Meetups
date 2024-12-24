@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { FaCamera, FaMapMarkerAlt, FaBriefcase } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { useNavigate } from "react-router-dom";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../firebase/firebaseConfig";
+import { auth, db, storage } from "../firebase/firebaseConfig";
 import { getUserDetails } from "../helpers/dbFunctions";
 import {
   collection,
@@ -15,11 +15,9 @@ import {
   where,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const EditProfile = () => {
-  const [preview, setPreview] = useState(DEFAULT_USER);
-  const [location, setLocation] = useState("");
-  const [profession, setProfession] = useState("");
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   useEffect(() => {
@@ -46,13 +44,9 @@ const EditProfile = () => {
           const docRef = doc(db, "meet_users", docSnapshot.id);
           await updateDoc(docRef, {
             ...userInfo,
-            user_location: userInfo.user_location
-              ? userInfo.user_location
-              : location,
-            user_profession: userInfo.user_profession
-              ? userInfo.user_profession
-              : profession,
           });
+          let userDetails = await getUserDetails(userInfo.user_email);
+          setUserInfo({ ...userDetails });
           toast.success("Profile Updated !!!", { duration: 1500 });
         });
       }
@@ -60,10 +54,28 @@ const EditProfile = () => {
       toast.error("something went wrong!!!", { duration: 1500 });
     }
   };
+  const handleUserPhotoEdit = (e) => {
+    const imageStorageRef = ref(
+      storage,
+      `images_meet/users/${e.target.files[0].name + Date.now()}`
+    );
+    uploadBytes(imageStorageRef, e.target.files[0])
+      .then(() => {
+        toast.success("user photo edit !!!");
+        getDownloadURL(imageStorageRef)
+          .then((url) => {
+            setUserInfo({
+              ...userInfo,
+              user_photo: url,
+            });
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 font-roboto">
-      {console.log("user info", userInfo)}
       <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 relative"></div>
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-xl shadow-sm -mt-24 relative z-10 p-6">
@@ -79,12 +91,7 @@ const EditProfile = () => {
                 <input
                   type="file"
                   className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      setPreview(URL.createObjectURL(file));
-                    }
-                  }}
+                  onChange={handleUserPhotoEdit}
                 />
               </label>
             </div>
@@ -124,8 +131,13 @@ const EditProfile = () => {
                     type="text"
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="City, Country"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    value={userInfo.user_location}
+                    onChange={(e) =>
+                      setUserInfo({
+                        ...userInfo,
+                        user_location: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -140,8 +152,13 @@ const EditProfile = () => {
                     type="text"
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Software Engineer"
-                    value={profession}
-                    onChange={(e) => setProfession(e.target.value)}
+                    value={userInfo.user_profession}
+                    onChange={(e) =>
+                      setUserInfo({
+                        ...userInfo,
+                        user_profession: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
