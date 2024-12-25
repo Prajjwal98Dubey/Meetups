@@ -13,7 +13,11 @@ import {
 } from "react-icons/fa";
 import { db } from "../firebase/firebaseConfig";
 import DEFAULT_USER from "../icons/default_user.png";
-import { getTimeStamp } from "../helpers/getFormattedTime";
+import {
+  getTimeStamp,
+  isEventLive,
+  timeDiffEndTimeToToday,
+} from "../helpers/getFormattedTime";
 
 const DisplayEvents = ({ event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -44,7 +48,6 @@ const DisplayEvents = ({ event }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-      {console.log("Details of event", eventDetails)}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-3">
           <img
@@ -54,12 +57,54 @@ const DisplayEvents = ({ event }) => {
           />
           <div>
             <h4 className="font-semibold">{eventDetails.user_name}</h4>
-            <p className="text-xs text-gray-500"> {getTimeStamp(eventDetails.createdAt)}</p>
+            <p className="text-xs text-gray-500">
+              {" "}
+              {getTimeStamp(eventDetails.createdAt)}
+            </p>
           </div>
         </div>
-        <button className="text-gray-400 hover:text-gray-600">
-          <FaShare />
-        </button>
+        {isEventLive(
+          eventDetails.eventStartTime,
+          eventDetails.eventEndTime
+        ) && (
+          <div className="flex">
+            <div className="w-fit flex p-2 mr-[8px]">
+              <div className="flex justify-center items-center mr-[2px]">
+                <div className="w-[10px] h-[10px] rounded-full bg-green-500 animate-pulse"></div>
+              </div>
+              <div className="p-[5px] flex justify-center w-fit items-center bg-gray-400 text-gray-100 font-bold text-[13px] rounded-[10px]">
+                Ongoing
+              </div>
+            </div>
+            <button className="text-gray-400 hover:text-gray-600">
+              <FaShare />
+            </button>
+          </div>
+        )}
+        {!isEventLive(
+          eventDetails.eventStartTime,
+          eventDetails.eventEndTime
+        ) ? (
+          timeDiffEndTimeToToday(eventDetails.eventEndTime) > 0 ? (
+            <div className="flex">
+              <div className="w-fit bg-green-600 text-white font-bold rounded-[10px] flex justify-center items-center text-[13px] p-2 mr-[8px]">
+                scheduled
+              </div>
+              <button className="text-gray-400 hover:text-gray-600">
+                <FaShare />
+              </button>
+            </div>
+          ) : (
+            <div className="flex font-roboto">
+              <div className="w-fit bg-red-600 text-white font-bold rounded-[10px] flex justify-center items-center text-[13px] p-2 mr-[8px]">
+                Ended
+              </div>
+              <button className="text-gray-400 hover:text-gray-600">
+                <FaShare />
+              </button>
+            </div>
+          )
+        ) : null}
       </div>
       {eventDetails.images && eventDetails.images.length > 0 && (
         <div className="relative">
@@ -114,7 +159,14 @@ const DisplayEvents = ({ event }) => {
         <div className="space-y-3 mb-6">
           <div className="flex items-center gap-2 text-gray-600">
             <FaCalendarAlt className="text-blue-500" />
-            <span>{new Date(eventDetails.eventTime).toLocaleString()}</span>
+            <div className="flex w-fit p-1">
+              <p className="text-gray-500 font-bold mr-[2px]">from</p>
+              <p>{new Date(eventDetails.eventStartTime).toLocaleString()}</p>
+            </div>
+            <div className="flex w-fit p-1">
+              <p className="text-gray-500 font-bold mr-[2px]">to</p>
+              <p>{new Date(eventDetails.eventEndTime).toLocaleString()}</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 text-gray-600">
@@ -160,10 +212,6 @@ const DisplayEvents = ({ event }) => {
                       <span className="font-semibold">{comment.userName}</span>
                       <p className="text-gray-700">{comment.text}</p>
                     </div>
-                    {/* <TimeAgo
-                      date={comment.timestamp}
-                      className="text-xs text-gray-500 mt-1"
-                    /> */}
                   </div>
                 </div>
               ))}

@@ -13,11 +13,12 @@ const NewPost = () => {
   const [images, setImages] = useState([]);
   const [isEvent, setIsEvent] = useState(false);
   const [caption, setCaption] = useState("");
-  const [eventTime, setEventTime] = useState("");
   const [eventName, setEventName] = useState("");
   const [eventTitle, setEventTitle] = useState("");
   const [eventLocation, setEventLocation] = useState("");
   const [eventDescription, setEventDescription] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -62,7 +63,8 @@ const NewPost = () => {
         eventTitle,
         eventDescription,
         eventLocation,
-        eventTime,
+        eventStartTime: startTime,
+        eventEndTime: endTime,
         eventImages: images,
         createdAt: Date.now(),
       };
@@ -217,12 +219,25 @@ const NewPost = () => {
                 {isEvent && (
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      When is your event?
+                      Start Time of your event ?
                     </label>
                     <input
                       type="datetime-local"
-                      value={eventTime}
-                      onChange={(e) => setEventTime(e.target.value)}
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                )}
+                {isEvent && (
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      End Time of your event ?
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
                       className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>

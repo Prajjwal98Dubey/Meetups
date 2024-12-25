@@ -179,7 +179,7 @@ const Profile = () => {
           <div className="lg:col-span-6">
             <div className="bg-white rounded-xl shadow-sm mb-6">
               <div className="flex overflow-x-auto">
-                <button className="flex-1 px-6 py-4 text-red-500 font-bold text-xl cursor-default">
+                <button className="flex-1 px-6 py-4 text-red-500 font-extrabold text-xl cursor-default">
                   Timeline
                 </button>
               </div>

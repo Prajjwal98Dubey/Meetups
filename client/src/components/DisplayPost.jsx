@@ -74,7 +74,7 @@ const DisplayPost = ({ post }) => {
               <img
                 src={postDetails.images[currentImageIndex]}
                 alt={`Post ${currentImageIndex + 1}`}
-                className="w-full aspect-[4/3] object-cover"
+                className="w-full aspect-square object-cover"
               />
 
               {postDetails.images.length > 1 && (
