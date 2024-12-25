@@ -1,22 +1,24 @@
-import {
-  FaMapMarkerAlt,
-  FaEnvelope,
-  FaEdit,
-  FaPlus,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaEnvelope, FaEdit, FaPlus } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { LOGOUT_ICON } from "../icons/icons";
 import { useContext, useEffect } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
+import { auth, db } from "../firebase/firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getUserDetails } from "../helpers/dbFunctions";
+import DisplayPost from "../components/DisplayPost";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import PostsContext from "../contexts/PostsContext";
+import EventsContext from "../contexts/EventsContext";
+import DisplayEvents from "../components/DisplayEvents";
 
 const Profile = () => {
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const { postsInfo, setPostsInfo } = useContext(PostsContext);
+  const { eventsInfo, setEventsInfo } = useContext(EventsContext);
   useEffect(() => {
     const getUserInfo = () => {
       onAuthStateChanged(auth, async (user) => {
@@ -26,10 +28,53 @@ const Profile = () => {
         }
       });
     };
+
     if (Object.keys(userInfo).length === 0) {
       getUserInfo();
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    const getUserPosts = async () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const q = query(
+            collection(db, "meet_posts"),
+            where("postUser", "==", user.email)
+          );
+          const documentSnapShots = await getDocs(q);
+          let allPosts = [];
+          documentSnapShots.forEach((doc) => {
+            allPosts.push(doc.data());
+          });
+          setPostsInfo([...allPosts]);
+        }
+      });
+    };
+    const getUsersEvents = async () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const q = query(
+            collection(db, "meet_events"),
+            where("eventHost", "==", user.email)
+          );
+          const documentSnapShots = await getDocs(q);
+          let allEvents = [];
+          documentSnapShots.forEach((doc) => {
+            allEvents.push(doc.data());
+          });
+          setEventsInfo([...allEvents]);
+        }
+      });
+    };
+
+    if (postsInfo.length === 0) {
+      getUserPosts();
+    }
+    if (eventsInfo.length === 0) {
+      getUsersEvents();
+    }
+  }, [postsInfo]);
 
   const handleLogOut = () => {
     signOut(auth)
@@ -102,7 +147,7 @@ const Profile = () => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Posts</span>
-                  <span className="font-semibold">245</span>
+                  <span className="font-semibold">{postsInfo.length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Followers</span>
@@ -139,8 +184,7 @@ const Profile = () => {
                 </button>
               </div>
             </div>
-
-            <div className="space-y-6">
+            {/* <div className="space-y-6">
               {[1, 2].map((post) => (
                 <div key={post} className="bg-white rounded-xl shadow-sm p-6">
                   <div className="flex items-center gap-4 mb-4">
@@ -164,11 +208,23 @@ const Profile = () => {
                   />
                 </div>
               ))}
+            </div> */}
+
+            <div className="space-y-6">
+              {postsInfo.map((post) => (
+                <DisplayPost key={post.postId} post={post} />
+              ))}
+            </div>
+            <div className="h-[15px]"></div>
+            <div className="space-y-6">
+              {eventsInfo.map((event) => (
+                <DisplayEvents key={event.eventId} event={event} />
+              ))}
             </div>
           </div>
         </div>
       </div>
-      <Link to="/edit_profile">
+      <Link to="/new_post">
         <button className="fixed bottom-28 right-8 w-14 h-14 bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white hover:bg-blue-600 transition">
           <FaPlus className="w-6 h-6" />
         </button>

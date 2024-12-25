@@ -16,6 +16,7 @@ const NewPost = () => {
   const [eventTime, setEventTime] = useState("");
   const [eventName, setEventName] = useState("");
   const [eventTitle, setEventTitle] = useState("");
+  const [eventLocation, setEventLocation] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
@@ -39,7 +40,7 @@ const NewPost = () => {
   const handleCreatePost = async () => {
     if (!isEvent) {
       if (!caption)
-        return toast.error("Caption is Mandatory 🥲", {
+        return toast.error("Caption is Mandatoryf 🥲", {
           duration: 1500,
         });
       let postDetails = {
@@ -55,16 +56,19 @@ const NewPost = () => {
         .then(() => toast.success("Post uploaded !!!"))
         .catch((err) => console.log(err));
     } else {
-      let postDetails = {
-        postId: nanoid(),
-        postUser: userInfo.user_email,
-        isEvent,
-        createdAt: Date.now(),
+      let eventDetails = {
+        eventId: nanoid(),
+        eventHost: userInfo.user_email,
         eventTitle,
         eventDescription,
+        eventLocation,
         eventTime,
+        eventImages: images,
+        createdAt: Date.now(),
       };
-      console.log("event details", postDetails);
+      addDoc(collection(db, "meet_events"), eventDetails)
+        .then(() => toast.success("Event Organised !!!", { duration: 1500 }))
+        .catch((err) => console.log(err));
     }
   };
 
@@ -199,7 +203,17 @@ const NewPost = () => {
                     </div>
                   </div>
                 )}
-
+                {isEvent && (
+                  <div>
+                    <input
+                      placeholder="Enter event location"
+                      value={eventLocation}
+                      onChange={(e) => setEventLocation(e.target.value)}
+                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows="4"
+                    />
+                  </div>
+                )}
                 {isEvent && (
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
