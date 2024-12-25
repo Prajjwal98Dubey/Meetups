@@ -13,14 +13,14 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import PostsContext from "../contexts/PostsContext";
 import EventsContext from "../contexts/EventsContext";
 import DisplayEvents from "../components/DisplayEvents";
-import { useState } from "react";
+import FilterValueContext from "../contexts/FIlterValueContext";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const { postsInfo, setPostsInfo } = useContext(PostsContext);
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
-  const [filterValue, setFilterValue] = useState("all");
+  const { filterValue, setFilterValue } = useContext(FilterValueContext);
   useEffect(() => {
     const getUserInfo = () => {
       onAuthStateChanged(auth, async (user) => {
@@ -208,6 +208,7 @@ const Profile = () => {
                 <select
                   className="border border-gray-400 font-bold p-1 rounded-md"
                   onChange={(e) => setFilterValue(e.target.value)}
+                  defaultValue={filterValue}
                 >
                   <option className="font-bold" value="all">
                     All
