@@ -67,17 +67,16 @@ const DisplayEvents = ({ event }) => {
           eventDetails.eventStartTime,
           eventDetails.eventEndTime
         ) && (
-          <div className="flex">
-            <div className="w-fit flex p-2 mr-[8px]">
-              <div className="flex justify-center items-center mr-[2px]">
-                <div className="w-[10px] h-[10px] rounded-full bg-green-500 animate-pulse"></div>
-              </div>
-              <div className="p-[5px] flex justify-center w-fit items-center bg-gray-400 text-gray-100 font-bold text-[13px] rounded-[10px]">
+          <div className="flex items-center gap-3 p-1.5 rounded-lg ">
+            <div className="flex items-center bg-white shadow-sm rounded-full px-3 py-1.5 border border-gray-200">
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse mr-2" />
+              <span className="text-sm font-semibold text-gray-700">
                 Ongoing
-              </div>
+              </span>
             </div>
-            <button className="text-gray-400 hover:text-gray-600">
-              <FaShare />
+
+            <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+              <FaShare className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -86,21 +85,21 @@ const DisplayEvents = ({ event }) => {
           eventDetails.eventEndTime
         ) ? (
           timeDiffEndTimeToToday(eventDetails.eventEndTime) > 0 ? (
-            <div className="flex">
-              <div className="w-fit bg-green-600 text-white font-bold rounded-[10px] flex justify-center items-center text-[13px] p-2 mr-[8px]">
-                scheduled
+            <div className="flex items-center gap-3 p-1.5">
+              <div className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold text-sm px-4 py-1.5 rounded-full shadow-sm ">
+                Scheduled
               </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <FaShare />
+              <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+                <FaShare className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <div className="flex font-roboto">
-              <div className="w-fit bg-red-600 text-white font-bold rounded-[10px] flex justify-center items-center text-[13px] p-2 mr-[8px]">
+            <div className="flex items-center gap-3 p-1.5">
+              <div className="bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-sm px-4 py-1.5 rounded-full shadow-sm ">
                 Ended
               </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <FaShare />
+              <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+                <FaShare className="w-4 h-4" />
               </button>
             </div>
           )

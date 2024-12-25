@@ -13,12 +13,14 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import PostsContext from "../contexts/PostsContext";
 import EventsContext from "../contexts/EventsContext";
 import DisplayEvents from "../components/DisplayEvents";
+import { useState } from "react";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const { postsInfo, setPostsInfo } = useContext(PostsContext);
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
+  const [filterValue, setFilterValue] = useState("all");
   useEffect(() => {
     const getUserInfo = () => {
       onAuthStateChanged(auth, async (user) => {
@@ -159,7 +161,6 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="font-semibold mb-4">Contact Info</h3>
               <div className="space-y-3">
@@ -175,51 +176,50 @@ const Profile = () => {
               </div>
             </div>
           </div>
-
           <div className="lg:col-span-6">
-            <div className="bg-white rounded-xl shadow-sm mb-6">
+            <div className="bg-white rounded-xl shadow-sm mb-3">
               <div className="flex overflow-x-auto">
                 <button className="flex-1 px-6 py-4 text-red-500 font-extrabold text-xl cursor-default">
                   Timeline
                 </button>
               </div>
             </div>
-            {/* <div className="space-y-6">
-              {[1, 2].map((post) => (
-                <div key={post} className="bg-white rounded-xl shadow-sm p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <img
-                      src={DEFAULT_USER}
-                      alt=""
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <div>
-                      <h4 className="font-semibold">John Doe</h4>
-                      <p className="text-gray-500 text-sm">2 hours ago</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 mb-4">
-                    Just shipped a new feature! 🚀 #coding #developer
-                  </p>
-                  <img
-                    src="https://via.placeholder.com/600x400"
-                    alt=""
-                    className="rounded-lg w-full"
-                  />
-                </div>
-              ))}
-            </div> */}
-
             <div className="space-y-6">
-              {postsInfo.map((post) => (
-                <DisplayPost key={post.postId} post={post} />
-              ))}
+              {(filterValue === "all" || filterValue === "posts") &&
+                postsInfo.map((post) => (
+                  <DisplayPost key={post.postId} post={post} />
+                ))}
             </div>
-            <div className="h-[15px]"></div>
+            <div className="h-[5px]"></div>
             <div className="space-y-6">
-              {eventsInfo.map((event) => (
-                <DisplayEvents key={event.eventId} event={event} />
-              ))}
+              {(filterValue === "all" || filterValue === "events") &&
+                eventsInfo.map((event) => (
+                  <DisplayEvents key={event.eventId} event={event} />
+                ))}
+            </div>
+          </div>
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold">Filters</h3>
+              </div>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-medium">Sort By</h2>
+                <select
+                  className="border border-gray-400 font-bold p-1 rounded-md"
+                  onChange={(e) => setFilterValue(e.target.value)}
+                >
+                  <option className="font-bold" value="all">
+                    All
+                  </option>
+                  <option className="font-bold" value="events">
+                    Only Events
+                  </option>
+                  <option className="font-bold" value="posts">
+                    Only Posts
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
