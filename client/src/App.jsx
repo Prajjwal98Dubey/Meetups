@@ -9,7 +9,8 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Feeds = lazy(() => import("./pages/Feeds"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
-const NewPost = lazy(()=>import("./pages/NewPost"))
+const NewPost = lazy(() => import("./pages/NewPost"));
+const StalkUser = lazy(() => import("./pages/StalkUser"));
 function App() {
   return (
     <>
@@ -75,6 +76,14 @@ const appRouter = createBrowserRouter([
     element: (
       <Suspense fallback={<LazyLoader />}>
         <NewPost />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/u/:user",
+    element: (
+      <Suspense fallback={<LazyLoader />}>
+        <StalkUser />
       </Suspense>
     ),
   },
