@@ -117,9 +117,6 @@ const Profile = () => {
                     )}
                   </div>
                   <div className="flex gap-4 mt-4 sm:mt-0">
-                    <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-bold">
-                      Follow
-                    </button>
                     <button
                       className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition flex justify-center p-1"
                       onClick={handleLogOut}

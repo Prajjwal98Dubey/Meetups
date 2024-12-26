@@ -1,12 +1,23 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  limit,
+  query,
+  where,
+} from "firebase/firestore";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { db } from "../firebase/firebaseConfig";
+import { auth, db } from "../firebase/firebaseConfig";
 import toast from "react-hot-toast";
 import DEFAULT_USER from "../icons/default_user.png";
 import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 import DisplayPost from "../components/DisplayPost";
 import DisplayEvents from "../components/DisplayEvents";
+import UserInfoContext from "../contexts/UserInfoContext";
+import { onAuthStateChanged } from "firebase/auth";
 
 const StalkUser = () => {
   const [posts, setPosts] = useState([]);
@@ -14,15 +25,35 @@ const StalkUser = () => {
   const [user, setUser] = useState({});
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const location = useLocation();
-
+  useEffect(() => {
+    const getLoggedInUserDetails = () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const q = query(
+            collection(db, "meet_users"),
+            where("user_email", "==", user.email)
+          );
+          const querySnapShot = await getDocs(q);
+          let userDetails = {};
+          querySnapShot.forEach((doc) => {
+            userDetails = { ...doc.data() };
+          });
+          setUserInfo({ ...userDetails });
+        }
+      });
+    };
+    if (Object.keys(userInfo).length == 0) getLoggedInUserDetails();
+  }, [userInfo]);
   useEffect(() => {
     const getUserDetails = async () => {
       const url = location.pathname.split("/");
-      const user = url[url.length - 1].split("-").join(" ");
+      const currUser = url[url.length - 1].split("-").join(" ");
       const q = query(
         collection(db, "meet_users"),
-        where("user_name", "==", user)
+        where("user_name", "==", currUser)
       );
       const documentSnapShot = await getDocs(q);
       if (documentSnapShot.empty)
@@ -32,6 +63,13 @@ const StalkUser = () => {
         userDetails = { ...doc.data() };
       });
       setUser({ ...userDetails });
+      const followerQuery = query(
+        collection(db, "meet_follower_following"),
+        where("follower", "==", userInfo.user_email),
+        where("following", "==", currUser)
+      );
+      const followerQuerySnapShot = await getDocs(followerQuery);
+      if (!followerQuerySnapShot.empty) setIsFollowing(true);
       const postQuery = query(
         collection(db, "meet_posts"),
         where("postUser", "==", userDetails.user_email)
@@ -53,7 +91,33 @@ const StalkUser = () => {
       setIsLoading(false);
     };
     getUserDetails();
-  }, [location.pathname]);
+  }, [location.pathname, userInfo.user_email]);
+
+  const handleFollow = async () => {
+    if (isFollowing) {
+      const followerQuery = query(
+        collection(db, "meet_follower_following"),
+        where("follower", "==", userInfo.user_email),
+        where("following", "==", user.user_name),
+        limit(1)
+      );
+      const querySnapShot = await getDocs(followerQuery);
+      if (querySnapShot.empty) return;
+      deleteDoc(doc(db, "meet_follower_following", querySnapShot.docs[0].id));
+      setIsFollowing(false);
+    } else {
+      await addDoc(collection(db, "meet_follower_following"), {
+        follower: userInfo.user_email,
+        following: location.pathname
+          .split("/")
+          .at(location.pathname.split("/").length - 1)
+          .split("-")
+          .join(" "),
+      });
+      setIsFollowing(true);
+    }
+  };
+
   return (
     <>
       {!isLoading && (
@@ -84,9 +148,21 @@ const StalkUser = () => {
                           )}
                         </div>
                         <div className="flex gap-4 mt-4 sm:mt-0">
-                          <button className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-bold">
-                            Follow
-                          </button>
+                          {isFollowing ? (
+                            <button
+                              className="px-6 py-2 bg-blue-500 text-white rounded-lg  bg-gradient-to-r from-green-500 to-green-600 hover:bg-gradient-to-r hover:from-green-700 hover:to-green-900 font-bold"
+                              onClick={handleFollow}
+                            >
+                              Following
+                            </button>
+                          ) : (
+                            <button
+                              className="px-6 py-2 bg-blue-500 text-white rounded-lg  bg-gradient-to-r from-blue-500 to-blue-600 hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-900 font-bold"
+                              onClick={handleFollow}
+                            >
+                              Follow
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
