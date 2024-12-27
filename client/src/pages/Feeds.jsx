@@ -1,19 +1,50 @@
-import {
-  FaSearch,
-  FaRegComment,
-  FaRegHeart,
-  FaShare,
-  FaEllipsisH,
-  FaPlus,
-} from "react-icons/fa";
+import { FaSearch, FaPlus } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
+import { useContext } from "react";
+import UserInfoContext from "../contexts/UserInfoContext";
+import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase/firebaseConfig";
+import { getUserDetails } from "../helpers/dbFunctions";
+import { feedsPosts } from "../helpers/feedsFunction";
+import FeedsContext from "../contexts/FeedsContext";
+import DisplayEvents from "../components/DisplayEvents";
+import DisplayPost from "../components/DisplayPost";
 
 const Feeds = () => {
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const { feedsInfo, setFeedsInfo } = useContext(FeedsContext);
+  useEffect(() => {
+    const getUserInfo = () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          let userDetails = await getUserDetails(user.email);
+          setUserInfo({ ...userDetails });
+        }
+      });
+    };
+    if (Object.keys(userInfo).length === 0) getUserInfo();
+  }, [userInfo]);
+  useEffect(() => {
+    const getFeeds = async () => {
+      let feeds = await feedsPosts();
+      console.log("feeed details", feeds);
+      setFeedsInfo([...feeds]);
+    };
+    if (Object.keys(feedsInfo).length === 0) getFeeds();
+  }, [feedsInfo]);
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-      {/* Sticky Header */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur-md shadow-sm z-50">
-        <div className="max-w-6xl mx-auto px-4 py-3">
+      <div className="sticky top-0 bg-white/80 backdrop-blur-md shadow-sm z-50 flex justify-center">
+        <div className="w-1/4 flex justify-center items-center">
+          <Link to="/">
+            <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              LinkUp
+            </p>
+          </Link>
+        </div>
+        <div className="w-1/2 mx-auto px-4 py-3 ">
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -23,12 +54,24 @@ const Feeds = () => {
             />
           </div>
         </div>
+        <div className="flex items-center gap-3 w-1/4 justify-center">
+          <div className="text-right hidden sm:block">
+            <p className="font-medium text-gray-900">{userInfo.user_name}</p>
+            <p className="text-sm text-gray-500">
+              @{userInfo.user_name?.toLowerCase()}
+            </p>
+          </div>
+          <Link to="/profile">
+            <img
+              src={userInfo.user_photo || DEFAULT_USER}
+              alt="Profile"
+              className="w-12 h-12 rounded-full border-2 border-gray-100 hover:border-blue-500 transition-colors"
+            />
+          </Link>
+        </div>
       </div>
-
-      {/* Stories */}
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          {/* Add Story */}
           <div className="flex-shrink-0">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full p-[2px]">
               <button className="w-full h-full bg-white rounded-full flex items-center justify-center">
@@ -37,7 +80,6 @@ const Feeds = () => {
             </div>
             <p className="text-xs text-center mt-1">Add Story</p>
           </div>
-          {/* Story Previews */}
           {[1, 2, 3, 4, 5].map((story) => (
             <div key={story} className="flex-shrink-0">
               <div className="w-20 h-20 bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 rounded-full p-[2px]">
@@ -52,66 +94,18 @@ const Feeds = () => {
         </div>
       </div>
 
-      {/* Feed Grid */}
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-          {[1, 2, 3, 4].map((post) => (
-            <div
-              key={post}
-              className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition"
-            >
-              {/* Post Header */}
-              <div className="flex items-center justify-between p-4">
-                <div className="flex items-center gap-3">
-                  <img src={DEFAULT_USER} className="w-10 h-10 rounded-full" />
-                  <div>
-                    <h4 className="font-semibold">John Doe</h4>
-                    <p className="text-xs text-gray-500">2 hours ago</p>
-                  </div>
-                </div>
-                <button className="text-gray-500 hover:text-gray-700">
-                  <FaEllipsisH />
-                </button>
-              </div>
-
-              {/* Post Image */}
-              <img
-                src={`https://source.unsplash.com/random/600x400?${post}`}
-                className="w-full aspect-[4/3] object-cover"
-              />
-
-              {/* Post Actions */}
-              <div className="p-4">
-                <div className="flex items-center gap-6 mb-4">
-                  <button className="flex items-center gap-2 text-gray-500 hover:text-red-500 transition">
-                    <FaRegHeart /> 2.4k
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition">
-                    <FaRegComment /> 128
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition">
-                    <FaShare />
-                  </button>
-                </div>
-
-                {/* Post Content */}
-                <p className="text-gray-800">
-                  Amazing view from today&apos;s hike! 🏔️ #nature #adventure
-                </p>
-                <div className="mt-2 flex gap-2">
-                  {["nature", "adventure"].map((tag) => (
-                    <span key={tag} className="text-xs text-blue-500">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
+          {feedsInfo.map((feed) => {
+            return feed.isEvent ? (
+              <DisplayEvents key={feed.eventId} event={feed} />
+            ) : (
+              <DisplayPost key={feed.postId} post={feed} />
+            );
+          })}
         </div>
       </div>
 
-      {/* Floating Action Button */}
       <button className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg flex items-center justify-center text-white hover:shadow-xl transition-shadow">
         <FaPlus className="w-6 h-6" />
       </button>

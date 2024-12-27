@@ -63,6 +63,7 @@ const NewPost = () => {
         eventTitle,
         eventDescription,
         eventLocation,
+        isEvent,
         eventStartTime: startTime,
         eventEndTime: endTime,
         eventImages: images,

@@ -5,13 +5,16 @@ import UserInfoContextProvider from "./contexts/UserInfoContextProvider.jsx";
 import PostsContextProvider from "./contexts/PostsContextProvider.jsx";
 import EventsContextProvider from "./contexts/EventsContextProvider.jsx";
 import FilterValueContextProvider from "./contexts/FilterValueContextProvider.jsx";
+import FeedsContextProvider from "./contexts/FeedsContextProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <UserInfoContextProvider>
     <PostsContextProvider>
       <EventsContextProvider>
         <FilterValueContextProvider>
-          <App />
+          <FeedsContextProvider>
+            <App />
+          </FeedsContextProvider>
         </FilterValueContextProvider>
       </EventsContextProvider>
     </PostsContextProvider>
