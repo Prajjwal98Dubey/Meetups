@@ -1,10 +1,8 @@
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useRef, useContext } from "react";
 import { FaArrowLeft, FaCamera, FaImage } from "react-icons/fa";
 import { nanoid } from "nanoid";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { onAuthStateChanged } from "firebase/auth";
-import { getUserDetails } from "../helpers/dbFunctions";
-import { auth, db, storage } from "../firebase/firebaseConfig";
+import { db, storage } from "../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import toast from "react-hot-toast";
 import { addDoc, collection } from "firebase/firestore";
@@ -23,24 +21,8 @@ const NewPost = () => {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const { userInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getUserInfo = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          let userDetails = await getUserDetails(user.email);
-          setUserInfo({ ...userDetails });
-        } else {
-          navigate("/profile");
-        }
-      });
-    };
-    if (Object.keys(userInfo).length === 0) {
-      getUserInfo();
-    }
-  }, [userInfo]);
 
   const handleCreatePost = async () => {
     if (!isEvent) {

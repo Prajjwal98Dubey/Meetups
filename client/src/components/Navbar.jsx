@@ -1,25 +1,10 @@
 import { Link } from "react-router-dom";
 import DEFAULT_USER from "../icons/default_user.png";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
-import { getUserDetails } from "../helpers/dbFunctions";
 
 const Navbar = () => {
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
-
-  useEffect(() => {
-    const getUserInfo = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const userDetails = await getUserDetails(user.email);
-          setUserInfo({ ...userDetails });
-        }
-      });
-    };
-    if (Object.keys(userInfo).length === 0) getUserInfo();
-  }, [userInfo]);
+  const { userInfo } = useContext(UserInfoContext);
 
   return (
     <div className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">

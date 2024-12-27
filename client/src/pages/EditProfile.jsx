@@ -1,10 +1,9 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { FaCamera, FaMapMarkerAlt, FaBriefcase } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { useNavigate } from "react-router-dom";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db, storage } from "../firebase/firebaseConfig";
+import { db, storage } from "../firebase/firebaseConfig";
 import { getUserDetails } from "../helpers/dbFunctions";
 import {
   collection,
@@ -20,19 +19,6 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 const EditProfile = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
-  useEffect(() => {
-    const getUserInfo = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const userDetails = await getUserDetails(user.email);
-          setUserInfo({ ...userDetails });
-        } else {
-          navigate("/login");
-        }
-      });
-    };
-    if (Object.keys(userInfo).length === 0) getUserInfo();
-  }, [userInfo]);
 
   const handleEditProfile = async () => {
     try {

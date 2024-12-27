@@ -1,4 +1,10 @@
-import { FaMapMarkerAlt, FaEnvelope, FaEdit, FaPlus, FaArrowLeft } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaEnvelope,
+  FaEdit,
+  FaPlus,
+  FaArrowLeft,
+} from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { LOGOUT_ICON } from "../icons/icons";
 import { useContext, useEffect } from "react";
@@ -7,7 +13,6 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../firebase/firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { getUserDetails } from "../helpers/dbFunctions";
 import DisplayPost from "../components/DisplayPost";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import PostsContext from "../contexts/PostsContext";
@@ -21,22 +26,6 @@ const Profile = () => {
   const { postsInfo, setPostsInfo } = useContext(PostsContext);
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
   const { filterValue, setFilterValue } = useContext(FilterValueContext);
-  useEffect(() => {
-    const getUserInfo = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          let userDetails = await getUserDetails(user.email);
-          setUserInfo({ ...userDetails });
-        } else {
-          navigate("/login");
-        }
-      });
-    };
-
-    if (Object.keys(userInfo).length === 0) {
-      getUserInfo();
-    }
-  }, [userInfo]);
 
   useEffect(() => {
     const getUserPosts = async () => {
@@ -83,10 +72,10 @@ const Profile = () => {
   const handleLogOut = () => {
     signOut(auth)
       .then(() => {
+        navigate("/");
         setUserInfo({});
         if (localStorage.getItem("meet-auth"))
           localStorage.removeItem("meet-auth");
-        navigate("/");
       })
       .catch(() => {
         toast("something went wrong !!!");
@@ -97,12 +86,12 @@ const Profile = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
           <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-700 relative">
-          <button 
-        onClick={() => navigate("/feeds")}
-        className="absolute top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-200"
-      >
-        <FaArrowLeft className="w-6 h-6 text-gray-700" />
-      </button>
+            <button
+              onClick={() => navigate("/feeds")}
+              className="absolute top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-200"
+            >
+              <FaArrowLeft className="w-6 h-6 text-gray-700" />
+            </button>
           </div>
           <div className="px-8 pb-8">
             <div className="flex flex-wrap items-end -mt-16">

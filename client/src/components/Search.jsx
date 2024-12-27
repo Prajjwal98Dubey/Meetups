@@ -1,30 +1,16 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DEFAULT_USER from "../icons/default_user.png";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/firebaseConfig";
-import { getUserDetails } from "../helpers/dbFunctions";
 import { handleSearchQuery } from "../helpers/feedsFunction";
 
 const Search = () => {
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const { userInfo } = useContext(UserInfoContext);
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const timerRef = useRef(null);
-  useEffect(() => {
-    const getUserInfo = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          let userDetails = await getUserDetails(user.email);
-          setUserInfo({ ...userDetails });
-        }
-      });
-    };
-    if (Object.keys(userInfo).length === 0) getUserInfo();
-  }, [userInfo]);
 
   return (
     <>

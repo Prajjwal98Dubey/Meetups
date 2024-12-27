@@ -13,6 +13,7 @@ import DEFAULT_USER from "../icons/default_user.png";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { getTimeStamp } from "../helpers/getFormattedTime";
+import { Link } from "react-router-dom";
 
 const DisplayPost = ({ post }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -50,21 +51,26 @@ const DisplayPost = ({ post }) => {
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-2 font-roboto">
           <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <img
-                src={
-                  postDetails.user_photo ? postDetails.user_photo : DEFAULT_USER
-                }
-                alt={post.userName}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-              <div>
-                <h4 className="font-semibold">{postDetails.user_name}</h4>
-                <p className="text-xs text-gray-500">
-                  {getTimeStamp(postDetails.createdAt)}
-                </p>
+            <Link to={`/u/${postDetails.user_name.split(" ").join("-")}`}>
+              <div className="flex items-center gap-3">
+                <img
+                  src={
+                    postDetails.user_photo
+                      ? postDetails.user_photo
+                      : DEFAULT_USER
+                  }
+                  alt={post.userName}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <div>
+                  <h4 className="font-semibold">{postDetails.user_name}</h4>
+                  <p className="text-xs text-gray-500">
+                    {getTimeStamp(postDetails.createdAt)}
+                  </p>
+                </div>
               </div>
-            </div>
+            </Link>
+
             <button className="text-gray-400 hover:text-gray-600">
               <FaShare />
             </button>

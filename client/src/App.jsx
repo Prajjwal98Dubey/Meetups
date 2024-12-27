@@ -1,7 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import LazyLoader from "./components/LazyLoader";
 import { Toaster } from "react-hot-toast";
+import UserInfoContext from "./contexts/UserInfoContext";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/firebaseConfig";
+import { getUserDetails } from "./helpers/dbFunctions";
 
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -13,6 +17,18 @@ const NewPost = lazy(() => import("./pages/NewPost"));
 const StalkUser = lazy(() => import("./pages/StalkUser"));
 const Event = lazy(() => import("./pages/Event"));
 function App() {
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  useEffect(() => {
+    const getUserInfo = async () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          let userDetails = await getUserDetails(user.email);
+          setUserInfo({ ...userDetails });
+        }
+      });
+    };
+    if (Object.keys(userInfo).length === 0) getUserInfo();
+  }, [userInfo]);
   return (
     <>
       <RouterProvider router={appRouter} />

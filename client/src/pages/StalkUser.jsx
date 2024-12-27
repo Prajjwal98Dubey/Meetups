@@ -9,15 +9,14 @@ import {
   where,
 } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { auth, db } from "../firebase/firebaseConfig";
+import { useLocation, useNavigate } from "react-router-dom";
+import { db } from "../firebase/firebaseConfig";
 import toast from "react-hot-toast";
 import DEFAULT_USER from "../icons/default_user.png";
-import { FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
+import { FaMapMarkerAlt, FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import DisplayPost from "../components/DisplayPost";
 import DisplayEvents from "../components/DisplayEvents";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { onAuthStateChanged } from "firebase/auth";
 
 const StalkUser = () => {
   const [posts, setPosts] = useState([]);
@@ -26,27 +25,10 @@ const StalkUser = () => {
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
-  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const navigate = useNavigate();
+  const { userInfo } = useContext(UserInfoContext);
   const location = useLocation();
-  useEffect(() => {
-    const getLoggedInUserDetails = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const q = query(
-            collection(db, "meet_users"),
-            where("user_email", "==", user.email)
-          );
-          const querySnapShot = await getDocs(q);
-          let userDetails = {};
-          querySnapShot.forEach((doc) => {
-            userDetails = { ...doc.data() };
-          });
-          setUserInfo({ ...userDetails });
-        }
-      });
-    };
-    if (Object.keys(userInfo).length == 0) getLoggedInUserDetails();
-  }, [userInfo]);
+
   useEffect(() => {
     const getUserDetails = async () => {
       const url = location.pathname.split("/");
@@ -125,10 +107,17 @@ const StalkUser = () => {
           <div className="bg-gray-50 font-roboto">
             <div className="max-w-7xl mx-auto px-4 py-8">
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-                <div className="h-32 bg-gradient-to-r from-red-500 to-rose-700"></div>
+                <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-700 relative">
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="absolute top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-200"
+                  >
+                    <FaArrowLeft className="w-6 h-6 text-gray-700" />
+                  </button>
+                </div>
                 <div className="px-8 pb-8">
                   <div className="flex flex-wrap items-end -mt-16">
-                    <div className="w-32 h-32 bg-white rounded-full p-2 mr-6 border border-gray-400 shadow-sm shadow-gray-400">
+                    <div className="w-32 h-32 bg-white rounded-full p-2 mr-6 border border-gray-400 shadow-sm shadow-gray-400 z-50">
                       <img
                         src={user.user_photo ? user.user_photo : DEFAULT_USER}
                         alt="Profile"
