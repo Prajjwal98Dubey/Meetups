@@ -47,7 +47,7 @@ const DisplayEvents = ({ event }) => {
   }, [event]);
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-2">
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-3">
           <img

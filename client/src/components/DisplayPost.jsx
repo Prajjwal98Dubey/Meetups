@@ -48,7 +48,7 @@ const DisplayPost = ({ post }) => {
           Loading...
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-6 font-roboto">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-2 font-roboto">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <img
