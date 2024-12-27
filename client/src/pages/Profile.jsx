@@ -1,4 +1,4 @@
-import { FaMapMarkerAlt, FaEnvelope, FaEdit, FaPlus } from "react-icons/fa";
+import { FaMapMarkerAlt, FaEnvelope, FaEdit, FaPlus, FaArrowLeft } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { LOGOUT_ICON } from "../icons/icons";
 import { useContext, useEffect } from "react";
@@ -27,6 +27,8 @@ const Profile = () => {
         if (user) {
           let userDetails = await getUserDetails(user.email);
           setUserInfo({ ...userDetails });
+        } else {
+          navigate("/login");
         }
       });
     };
@@ -94,10 +96,17 @@ const Profile = () => {
     <div className="bg-gray-50 font-roboto">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-          <div className="h-32 bg-gradient-to-r from-red-500 to-rose-700"></div>
+          <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-700 relative">
+          <button 
+        onClick={() => navigate("/feeds")}
+        className="absolute top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-200"
+      >
+        <FaArrowLeft className="w-6 h-6 text-gray-700" />
+      </button>
+          </div>
           <div className="px-8 pb-8">
             <div className="flex flex-wrap items-end -mt-16">
-              <div className="w-32 h-32 bg-white rounded-full p-2 mr-6 border border-gray-400 shadow-sm shadow-gray-400">
+              <div className="w-32 h-32 bg-white rounded-full p-2 mr-6 border border-gray-400 shadow-sm shadow-gray-400 z-50">
                 <img
                   src={userInfo.user_photo ? userInfo.user_photo : DEFAULT_USER}
                   alt="Profile"

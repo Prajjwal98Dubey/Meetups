@@ -159,19 +159,31 @@ const Search = () => {
           </div>
         </div>
         <div className="flex items-center gap-3 w-1/4 justify-center">
-          <div className="text-right hidden sm:block">
-            <p className="font-medium text-gray-900">{userInfo.user_name}</p>
-            <p className="text-sm text-gray-500">
-              @{userInfo.user_name?.toLowerCase()}
-            </p>
-          </div>
-          <Link to="/profile">
-            <img
-              src={userInfo.user_photo || DEFAULT_USER}
-              alt="Profile"
-              className="w-12 h-12 rounded-full border-2 border-gray-100 hover:border-blue-500 transition-colors object-cover"
-            />
-          </Link>
+          {Object.keys(userInfo).length === 0 ? (
+            <Link to="/login">
+              <button className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-700 text-white font-bold font-roboto hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-900 rounded-md ">
+                Login
+              </button>
+            </Link>
+          ) : (
+            <>
+              <div className="text-right hidden sm:block">
+                <p className="font-medium text-gray-900">
+                  {userInfo.user_name}
+                </p>
+                <p className="text-sm text-gray-500">
+                  @{userInfo.user_name?.toLowerCase()}
+                </p>
+              </div>
+              <Link to="/profile">
+                <img
+                  src={userInfo.user_photo || DEFAULT_USER}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full border-2 border-gray-100 hover:border-blue-500 transition-colors object-cover"
+                />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>

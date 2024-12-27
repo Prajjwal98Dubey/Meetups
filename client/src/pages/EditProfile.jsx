@@ -26,6 +26,8 @@ const EditProfile = () => {
         if (user) {
           const userDetails = await getUserDetails(user.email);
           setUserInfo({ ...userDetails });
+        } else {
+          navigate("/login");
         }
       });
     };
@@ -48,6 +50,7 @@ const EditProfile = () => {
           let userDetails = await getUserDetails(userInfo.user_email);
           setUserInfo({ ...userDetails });
           toast.success("Profile Updated !!!", { duration: 1500 });
+          navigate("/profile");
         });
       }
     } catch {
@@ -84,7 +87,7 @@ const EditProfile = () => {
               <img
                 src={userInfo.user_photo ? userInfo.user_photo : DEFAULT_USER}
                 alt="Profile"
-                className="w-32 h-32 rounded-full border-4 border-white shadow-md"
+                className="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover"
               />
               <label className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full text-white cursor-pointer hover:bg-blue-600 transition">
                 <FaCamera />

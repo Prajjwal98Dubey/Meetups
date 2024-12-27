@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import { FaCamera, FaImage } from "react-icons/fa";
+import { FaArrowLeft, FaCamera, FaImage } from "react-icons/fa";
 import { nanoid } from "nanoid";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { onAuthStateChanged } from "firebase/auth";
@@ -8,6 +8,7 @@ import { auth, db, storage } from "../firebase/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import toast from "react-hot-toast";
 import { addDoc, collection } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const NewPost = () => {
   const [images, setImages] = useState([]);
@@ -23,6 +24,7 @@ const NewPost = () => {
   const videoRef = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUserInfo = () => {
@@ -30,6 +32,8 @@ const NewPost = () => {
         if (user) {
           let userDetails = await getUserDetails(user.email);
           setUserInfo({ ...userDetails });
+        } else {
+          navigate("/profile");
         }
       });
     };
@@ -54,7 +58,10 @@ const NewPost = () => {
         images,
       };
       addDoc(collection(db, "meet_posts"), postDetails)
-        .then(() => toast.success("Post uploaded !!!"))
+        .then(() => {
+          toast.success("Post uploaded !!!");
+          navigate("/profile");
+        })
         .catch((err) => console.log(err));
     } else {
       let eventDetails = {
@@ -70,7 +77,10 @@ const NewPost = () => {
         createdAt: Date.now(),
       };
       addDoc(collection(db, "meet_events"), eventDetails)
-        .then(() => toast.success("Event Organised !!!", { duration: 1500 }))
+        .then(() => {
+          toast.success("Event Organised !!!", { duration: 1500 });
+          navigate("/profile");
+        })
         .catch((err) => console.log(err));
     }
   };
@@ -102,6 +112,12 @@ const NewPost = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="grid md:grid-cols-2">
             <div className="bg-gray-900 p-8 relative min-h-[600px] flex items-center justify-center">
+              <button
+                onClick={() => navigate(-1)}
+                className="absolute top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md hover:shadow-lg transform hover:scale-110 transition-all duration-200"
+              >
+                <FaArrowLeft className="w-6 h-6 text-gray-700" />
+              </button>
               {images.length > 0 ? (
                 <>
                   <img

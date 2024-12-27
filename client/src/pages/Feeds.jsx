@@ -7,6 +7,7 @@ import FeedsContext from "../contexts/FeedsContext";
 import DisplayEvents from "../components/DisplayEvents";
 import DisplayPost from "../components/DisplayPost";
 import Search from "../components/Search";
+import { Link } from "react-router-dom";
 
 const Feeds = () => {
   const { feedsInfo, setFeedsInfo } = useContext(FeedsContext);
@@ -55,10 +56,11 @@ const Feeds = () => {
           })}
         </div>
       </div>
-
-      <button className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg flex items-center justify-center text-white hover:shadow-xl transition-shadow">
-        <FaPlus className="w-6 h-6" />
-      </button>
+      <Link to="/new_post">
+        <button className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-lg flex items-center justify-center text-white hover:shadow-xl transition-shadow">
+          <FaPlus className="w-6 h-6" />
+        </button>
+      </Link>
     </div>
   );
 };
