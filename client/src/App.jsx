@@ -11,6 +11,7 @@ const Feeds = lazy(() => import("./pages/Feeds"));
 const EditProfile = lazy(() => import("./pages/EditProfile"));
 const NewPost = lazy(() => import("./pages/NewPost"));
 const StalkUser = lazy(() => import("./pages/StalkUser"));
+const Event = lazy(() => import("./pages/Event"));
 function App() {
   return (
     <>
@@ -84,6 +85,14 @@ const appRouter = createBrowserRouter([
     element: (
       <Suspense fallback={<LazyLoader />}>
         <StalkUser />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/event/:id",
+    element: (
+      <Suspense fallback={<LazyLoader />}>
+        <Event />
       </Suspense>
     ),
   },

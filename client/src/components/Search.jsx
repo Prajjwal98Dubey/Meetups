@@ -1,7 +1,7 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DEFAULT_USER from "../icons/default_user.png";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
@@ -13,6 +13,7 @@ const Search = () => {
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const timerRef = useRef(null);
   useEffect(() => {
     const getUserInfo = () => {
       onAuthStateChanged(auth, async (user) => {
@@ -45,11 +46,27 @@ const Search = () => {
               onChange={async (e) => {
                 setSearchText(e.target.value);
                 if (e.target.value.trim().length > 0) {
-                  let result = await handleSearchQuery(
-                    e.target.value.trim().toLowerCase()
-                  );
-                  setSearchResults([...result]);
-                  setIsLoading(false);
+                  if (timerRef.current === null) {
+                    let result = await handleSearchQuery(
+                      e.target.value.trim().toLowerCase()
+                    );
+                    setSearchResults([...result]);
+                    setIsLoading(false);
+                    timerRef.current = "timer";
+                    timerRef.current = setTimeout(() => {
+                      timerRef.current = null;
+                    }, 300);
+                  } else {
+                    clearTimeout(timerRef.current);
+                    timerRef.current = setTimeout(async () => {
+                      timerRef.current = null;
+                      let result = await handleSearchQuery(
+                        e.target.value.trim().toLowerCase()
+                      );
+                      setSearchResults([...result]);
+                      setIsLoading(false);
+                    }, 300);
+                  }
                 }
               }}
               className="w-full pl-10 pr-4 py-2 bg-gray-100/80 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -100,33 +117,35 @@ const Search = () => {
                           </div>
                         </Link>
                       ) : (
-                        <div
-                          key={index}
-                          className="block hover:bg-gray-50 transition-colors"
-                        >
-                          <div className="flex items-center gap-4 p-4">
-                            <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">
-                                {search.event_title}
-                              </h4>
-                            </div>
-                            <div className="text-blue-500">
-                              <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M9 5l7 7-7 7"
-                                />
-                              </svg>
+                        <Link to={`/event/${search.event_id}`}>
+                          <div
+                            key={index}
+                            className="block hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="flex items-center gap-4 p-4">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900">
+                                  {search.event_title}
+                                </h4>
+                              </div>
+                              <div className="text-blue-500">
+                                <svg
+                                  className="w-5 h-5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M9 5l7 7-7 7"
+                                  />
+                                </svg>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       );
                     })}
                   </div>

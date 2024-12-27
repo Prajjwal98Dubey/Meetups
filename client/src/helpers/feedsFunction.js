@@ -55,6 +55,7 @@ export const handleSearchQuery = async (text) => {
       filteredEvents.push({
         search_category: "events",
         event_title: currEvent.eventTitle,
+        event_id: currEvent.eventId,
       });
     }
   });
