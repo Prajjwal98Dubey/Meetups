@@ -23,6 +23,14 @@ const NewPost = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { userInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
+  const eventCategories = [
+    "Technology",
+    "Bike Rides",
+    "Sports",
+    "Hiking",
+    "Random",
+  ];
+  const [eventCategory, setEventCategory] = useState("");
 
   const handleCreatePost = async () => {
     if (!isEvent) {
@@ -239,6 +247,28 @@ const NewPost = () => {
                       onChange={(e) => setEndTime(e.target.value)}
                       className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
+                  </div>
+                )}
+                {isEvent && (
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Event Category
+                    </label>
+                    <select
+                      value={eventCategory}
+                      onChange={(e) => setEventCategory(e.target.value)}
+                      className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    >
+                      <option value="" disabled>
+                        Select a category
+                      </option>
+                      {eventCategories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 )}
 

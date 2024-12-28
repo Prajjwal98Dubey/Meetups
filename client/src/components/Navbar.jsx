@@ -5,7 +5,6 @@ import UserInfoContext from "../contexts/UserInfoContext";
 
 const Navbar = () => {
   const { userInfo } = useContext(UserInfoContext);
-
   return (
     <div className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4">
@@ -13,7 +12,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-4">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur group-hover:blur-md transition-all"></div>
-              <div className="relative bg-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+              <div className="relative bg-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 text-wrap">
                 LU
               </div>
             </div>

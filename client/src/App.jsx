@@ -16,6 +16,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const NewPost = lazy(() => import("./pages/NewPost"));
 const StalkUser = lazy(() => import("./pages/StalkUser"));
 const Event = lazy(() => import("./pages/Event"));
+const Error = lazy(() => import("./pages/Error"));
 function App() {
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
   useEffect(() => {
@@ -109,6 +110,14 @@ const appRouter = createBrowserRouter([
     element: (
       <Suspense fallback={<LazyLoader />}>
         <Event />
+      </Suspense>
+    ),
+  },
+  {
+    path: "*",
+    element: (
+      <Suspense fallback={<LazyLoader />}>
+        <Error />
       </Suspense>
     ),
   },

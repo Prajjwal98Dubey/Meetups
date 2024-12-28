@@ -1,4 +1,13 @@
-import { FaPlus } from "react-icons/fa";
+import {
+  FaBiking,
+  FaClock,
+  FaCompass,
+  FaEllipsisH,
+  FaLaptopCode,
+  FaMountain,
+  FaPlus,
+  FaVolleyballBall,
+} from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { useContext } from "react";
 import { useEffect } from "react";
@@ -8,9 +17,21 @@ import DisplayEvents from "../components/DisplayEvents";
 import DisplayPost from "../components/DisplayPost";
 import Search from "../components/Search";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const Feeds = () => {
   const { feedsInfo, setFeedsInfo } = useContext(FeedsContext);
+  const [selectedCategory, setSelectedCategory] = useState("Recent");
+
+  const categories = [
+    { name: "Recent", icon: <FaClock /> },
+    { name: "Technology", icon: <FaLaptopCode /> },
+    { name: "Bike Rides", icon: <FaBiking /> },
+    { name: "Sports", icon: <FaVolleyballBall /> },
+    { name: "Hiking", icon: <FaMountain /> },
+    { name: "Random", icon: <FaCompass /> },
+    { name: "Others", icon: <FaEllipsisH /> },
+  ];
   useEffect(() => {
     const getFeeds = async () => {
       let feeds = await feedsPosts();
@@ -41,6 +62,26 @@ const Feeds = () => {
               </div>
               <p className="text-xs text-center mt-1">User {story}</p>
             </div>
+          ))}
+        </div>
+
+        <div className="mt-6 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+          {categories.map((category) => (
+            <button
+              key={category.name}
+              onClick={() => setSelectedCategory(category.name)}
+              className={`flex-shrink-0 flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-200
+                ${
+                  selectedCategory === category.name
+                    ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
+                }`}
+            >
+              <span className="text-lg">{category.icon}</span>
+              <span className="whitespace-nowrap font-medium">
+                {category.name}
+              </span>
+            </button>
           ))}
         </div>
       </div>
