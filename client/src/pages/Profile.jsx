@@ -9,7 +9,6 @@ import DEFAULT_USER from "../icons/default_user.png";
 import { LOGOUT_ICON } from "../icons/icons";
 import { useContext, useEffect } from "react";
 import UserInfoContext from "../contexts/UserInfoContext";
-import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "../firebase/firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -19,6 +18,8 @@ import PostsContext from "../contexts/PostsContext";
 import EventsContext from "../contexts/EventsContext";
 import DisplayEvents from "../components/DisplayEvents";
 import FilterValueContext from "../contexts/FIlterValueContext";
+import { signOut } from "firebase/auth";
+import CategoryInfoContext from "../contexts/CategoryInfoContext";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -26,39 +27,32 @@ const Profile = () => {
   const { postsInfo, setPostsInfo } = useContext(PostsContext);
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
   const { filterValue, setFilterValue } = useContext(FilterValueContext);
+  const { setSelectedCategory } = useContext(CategoryInfoContext);
 
   useEffect(() => {
     const getUserPosts = async () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const q = query(
-            collection(db, "meet_posts"),
-            where("postUser", "==", user.email)
-          );
-          const documentSnapShots = await getDocs(q);
-          let allPosts = [];
-          documentSnapShots.forEach((doc) => {
-            allPosts.push(doc.data());
-          });
-          setPostsInfo([...allPosts]);
-        }
+      const q = query(
+        collection(db, "meet_posts"),
+        where("postUser", "==", userInfo.user_email)
+      );
+      const documentSnapShots = await getDocs(q);
+      let allPosts = [];
+      documentSnapShots.forEach((doc) => {
+        allPosts.push(doc.data());
       });
+      setPostsInfo([...allPosts]);
     };
     const getUsersEvents = async () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const q = query(
-            collection(db, "meet_events"),
-            where("eventHost", "==", user.email)
-          );
-          const documentSnapShots = await getDocs(q);
-          let allEvents = [];
-          documentSnapShots.forEach((doc) => {
-            allEvents.push(doc.data());
-          });
-          setEventsInfo([...allEvents]);
-        }
+      const q = query(
+        collection(db, "meet_events"),
+        where("eventHost", "==", userInfo.user_email)
+      );
+      const documentSnapShots = await getDocs(q);
+      let allEvents = [];
+      documentSnapShots.forEach((doc) => {
+        allEvents.push(doc.data());
       });
+      setEventsInfo([...allEvents]);
     };
 
     if (postsInfo.length === 0) {
@@ -67,13 +61,17 @@ const Profile = () => {
     if (eventsInfo.length === 0) {
       getUsersEvents();
     }
-  }, [postsInfo]);
+  }, [userInfo.user_email]);
 
   const handleLogOut = () => {
     signOut(auth)
       .then(() => {
-        navigate("/");
         setUserInfo({});
+        setPostsInfo([]);
+        setEventsInfo([]);
+        setFilterValue("all");
+        setSelectedCategory("recent");
+        navigate("/");
         if (localStorage.getItem("meet-auth"))
           localStorage.removeItem("meet-auth");
       })
@@ -81,6 +79,7 @@ const Profile = () => {
         toast("something went wrong !!!");
       });
   };
+
   return (
     <div className="bg-gray-50 font-roboto">
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -233,5 +232,4 @@ const Profile = () => {
     </div>
   );
 };
-
 export default Profile;

@@ -68,7 +68,7 @@ const Search = () => {
                     {searchResults.map((search, index) => {
                       return search.search_category === "users" ? (
                         <Link
-                          key={search.user_email}
+                          key={index}
                           to={`/u/${search.user_name.split(" ").join("-")}`}
                           className="block hover:bg-gray-50 transition-colors"
                         >
@@ -103,11 +103,8 @@ const Search = () => {
                           </div>
                         </Link>
                       ) : (
-                        <Link to={`/event/${search.event_id}`}>
-                          <div
-                            key={index}
-                            className="block hover:bg-gray-50 transition-colors"
-                          >
+                        <Link key={index} to={`/event/${search.event_id}`}>
+                          <div className="block hover:bg-gray-50 transition-colors">
                             <div className="flex items-center gap-4 p-4">
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900">

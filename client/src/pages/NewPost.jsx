@@ -31,7 +31,6 @@ const NewPost = () => {
     "Random",
   ];
   const [eventCategory, setEventCategory] = useState("");
-
   const handleCreatePost = async () => {
     if (!isEvent) {
       if (!caption)
@@ -61,6 +60,7 @@ const NewPost = () => {
         eventDescription,
         eventLocation,
         isEvent,
+        eventCategory: eventCategory.toLowerCase(),
         eventStartTime: startTime,
         eventEndTime: endTime,
         eventImages: images,

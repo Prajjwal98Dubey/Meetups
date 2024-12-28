@@ -1,8 +1,9 @@
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
 // all feeds containing events and posts as well.
-export const feedsPosts = async () => {
+export const feedsPosts = async (category) => {
+  if (!category) category = "recent";
   let postsDetails = [];
   let eventsDetails = [];
   let feeds = [];
@@ -11,13 +12,26 @@ export const feedsPosts = async () => {
   postsQuerySnapShot.forEach((doc) => {
     postsDetails.push(doc.data());
   });
-  const eventQuery = query(collection(db, "meet_events"));
+  const eventQuery =
+    category !== "recent"
+      ? query(
+          collection(db, "meet_events"),
+          where("eventCategory", "==", category)
+        )
+      : query(collection(db, "meet_events"));
   const eventQuerySnapShot = await getDocs(eventQuery);
   eventQuerySnapShot.forEach((doc) => {
     eventsDetails.push(doc.data());
   });
-  feeds = [...postsDetails, ...eventsDetails];
+  feeds =
+    category === "recent"
+      ? [...postsDetails, ...eventsDetails]
+      : [...eventsDetails];
   feeds.sort((a, b) => b.createdAt - a.createdAt);
+
+  feeds.length === 0
+    ? feeds.push({ isEmpty: true })
+    : feeds.push({ isEmpty: false });
   return feeds;
 };
 
