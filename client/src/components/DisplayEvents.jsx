@@ -201,18 +201,19 @@ const DisplayEvents = ({ event }) => {
                 <span>{eventDetails.attendees?.length || 0} people joined</span>
               </div>
             </div>
-            {location.pathname !== "/profile" && (
-              <button
-                onClick={() => setIsJoined(!isJoined)}
-                className={`w-full py-3 rounded-lg font-semibold mb-4 ${
-                  isJoined
-                    ? "bg-red-100 text-red-600 hover:bg-red-200"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
-              >
-                {isJoined ? "Leave Event" : "Join Event"}
-              </button>
-            )}
+            {location.pathname !== "/profile" &&
+              timeDiffEndTimeToToday(eventDetails.eventEndTime) > 0 && (
+                <button
+                  onClick={() => setIsJoined(!isJoined)}
+                  className={`w-full py-3 rounded-lg font-semibold mb-4 ${
+                    isJoined
+                      ? "bg-red-100 text-red-600 hover:bg-red-200"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                >
+                  {isJoined ? "Leave Event" : "Join Event"}
+                </button>
+              )}
             <div>
               <button
                 onClick={() => setShowComments(!showComments)}
