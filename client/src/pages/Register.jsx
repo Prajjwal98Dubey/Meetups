@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import AuthSideBar from "../components/AuthSideBar";
 import { FaUser, FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -34,8 +33,7 @@ const Register = () => {
   };
   return (
     <div className="w-full min-h-screen flex">
-      <AuthSideBar />
-      <div className="w-1/2 min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-700 font-roboto">
+      <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-700 font-roboto">
         <form className="bg-white p-8 rounded-xl shadow-lg shadow-gray-800 w-96 transform transition-all">
           <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-gray-800 mb-2">

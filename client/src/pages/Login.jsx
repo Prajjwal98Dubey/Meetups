@@ -1,5 +1,4 @@
 import { FaLock, FaGoogle, FaEnvelope } from "react-icons/fa";
-import AuthSideBar from "../components/AuthSideBar";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { googleSignIn, loginUser } from "../firebase/authentication";
@@ -30,8 +29,7 @@ const Login = () => {
   };
   return (
     <div className="w-full min-h-screen flex">
-      <AuthSideBar />
-      <div className="flex items-center justify-center w-1/2 min-h-screen bg-gradient-to-r from-blue-600 to-purple-700 font-roboto ">
+      <div className="flex items-center justify-center w-full min-h-screen bg-gradient-to-r from-blue-600 to-purple-700 font-roboto ">
         <form className="bg-white p-8 rounded-xl shadow-lg w-96 transform transition-all  shadow-gray-800">
           <div className="text-center mb-8 ">
             <h2 className="text-4xl font-bold text-gray-800 mb-2">
