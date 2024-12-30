@@ -7,6 +7,9 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import toast from "react-hot-toast";
 import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import PostsContext from "../contexts/PostsContext";
+import EventsContext from "../contexts/EventsContext";
 
 const NewPost = () => {
   const [images, setImages] = useState([]);
@@ -18,6 +21,9 @@ const NewPost = () => {
   const [eventDescription, setEventDescription] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [isLoadingLocations, setIsLoadingLocations] = useState(false);
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -31,10 +37,41 @@ const NewPost = () => {
     "Random",
   ];
   const [eventCategory, setEventCategory] = useState("");
+  const { postsInfo, setPostsInfo } = useContext(PostsContext);
+  const { eventsInfo, setEventsInfo } = useContext(EventsContext);
+  useEffect(() => {
+    const getEventLocation = async () => {
+      if (!eventLocation) {
+        setLocationSuggestions([]);
+        return;
+      }
+      setIsLoadingLocations(true);
+      try {
+        let res = await fetch(
+          `https://api.olamaps.io/places/v1/autocomplete?input=${eventLocation}&location=&api_key=${
+            import.meta.env.VITE_OLA_API_KEY
+          }`
+        );
+        res = await res.json();
+        setLocationSuggestions(res.predictions || []);
+      } catch (error) {
+        console.log(error);
+        toast.error("Error fetching locations");
+      } finally {
+        setIsLoadingLocations(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(() => {
+      if (eventLocation) getEventLocation();
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [eventLocation]);
   const handleCreatePost = async () => {
     if (!isEvent) {
       if (!caption)
-        return toast.error("Caption is Mandatoryf 🥲", {
+        return toast.error("Caption is Mandatory 🥲", {
           duration: 1500,
         });
       let postDetails = {
@@ -49,6 +86,7 @@ const NewPost = () => {
       addDoc(collection(db, "meet_posts"), postDetails)
         .then(() => {
           toast.success("Post uploaded !!!");
+          setPostsInfo([...postsInfo, postDetails]);
           navigate("/profile");
         })
         .catch((err) => console.log(err));
@@ -69,6 +107,7 @@ const NewPost = () => {
       addDoc(collection(db, "meet_events"), eventDetails)
         .then(() => {
           toast.success("Event Organised !!!", { duration: 1500 });
+          setEventsInfo([...eventsInfo, eventDetails]);
           navigate("/profile");
         })
         .catch((err) => console.log(err));
@@ -213,14 +252,49 @@ const NewPost = () => {
                   </div>
                 )}
                 {isEvent && (
-                  <div>
-                    <input
-                      placeholder="Enter event location"
-                      value={eventLocation}
-                      onChange={(e) => setEventLocation(e.target.value)}
-                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      rows="4"
-                    />
+                  <div className="relative mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Event Location
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={eventLocation}
+                        onChange={(e) => {
+                          setEventLocation(e.target.value);
+                          setShowLocationDropdown(true);
+                        }}
+                        className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Enter location..."
+                      />
+
+                      {showLocationDropdown && eventLocation && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                          {isLoadingLocations ? (
+                            <div className="p-4 text-center text-gray-500">
+                              Loading locations...
+                            </div>
+                          ) : locationSuggestions.length > 0 ? (
+                            locationSuggestions.map((suggestion, index) => (
+                              <button
+                                key={index}
+                                className="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors"
+                                onClick={() => {
+                                  setEventLocation(suggestion.description);
+                                  setShowLocationDropdown(false);
+                                }}
+                              >
+                                {suggestion.description}
+                              </button>
+                            ))
+                          ) : (
+                            <div className="p-4 text-center text-gray-500">
+                              No locations found
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
                 {isEvent && (

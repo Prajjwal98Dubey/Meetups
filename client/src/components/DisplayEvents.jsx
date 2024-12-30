@@ -20,6 +20,7 @@ import {
 } from "../helpers/getFormattedTime";
 import { Link, useLocation } from "react-router-dom";
 import { AUTH_LOADER_ICON } from "../icons/icons";
+import { trimEventLocationString } from "../helpers/userLocation";
 
 const DisplayEvents = ({ event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -50,6 +51,16 @@ const DisplayEvents = ({ event }) => {
     };
     getEventDetails();
   }, [event]);
+
+  const handleSearchOnGoogleMap = (searchQuery) => {
+    if (searchQuery.trim()) {
+      const encodedQuery = encodeURIComponent(searchQuery);
+      window.open(
+        `https://www.google.com/maps/search/${encodedQuery}`,
+        "_blank"
+      );
+    }
+  };
 
   return (
     <>
@@ -193,7 +204,14 @@ const DisplayEvents = ({ event }) => {
 
               <div className="flex items-center gap-2 text-gray-600">
                 <FaMapMarkerAlt className="text-red-500" />
-                <span>{eventDetails.eventLocation}</span>
+                <span
+                  className="hover:underline hover:cursor-pointer"
+                  onClick={() =>
+                    handleSearchOnGoogleMap(eventDetails.eventLocation)
+                  }
+                >
+                  {trimEventLocationString(eventDetails.eventLocation)}
+                </span>
               </div>
 
               <div className="flex items-center gap-2 text-gray-600">
