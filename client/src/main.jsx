@@ -7,6 +7,7 @@ import EventsContextProvider from "./contexts/EventsContextProvider.jsx";
 import FilterValueContextProvider from "./contexts/FilterValueContextProvider.jsx";
 import FeedsContextProvider from "./contexts/FeedsContextProvider.jsx";
 import CategoryInfoContextProvider from "./contexts/CategoryInfoContextProvider.jsx";
+import JoinEventInfoProvider from "./contexts/JoinEventInfoProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <UserInfoContextProvider>
@@ -15,7 +16,9 @@ createRoot(document.getElementById("root")).render(
         <FilterValueContextProvider>
           <FeedsContextProvider>
             <CategoryInfoContextProvider>
-              <App />
+              <JoinEventInfoProvider>
+                <App />
+              </JoinEventInfoProvider>
             </CategoryInfoContextProvider>
           </FeedsContextProvider>
         </FilterValueContextProvider>

@@ -1,5 +1,13 @@
 /* eslint-disable react/prop-types */
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { useEffect } from "react";
 import { useState } from "react";
 import {
@@ -21,12 +29,17 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { AUTH_LOADER_ICON } from "../icons/icons";
 import { trimEventLocationString } from "../helpers/userLocation";
+import { useContext } from "react";
+import JoinEventInfo from "../contexts/JoinEventInfo";
+import UserInfoContext from "../contexts/UserInfoContext";
+import toast from "react-hot-toast";
 
 const DisplayEvents = ({ event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isJoined, setIsJoined] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [eventDetails, setEventDetails] = useState({});
+  const { joinInfo, setJoinInfo } = useContext(JoinEventInfo);
+  const { userInfo } = useContext(UserInfoContext);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
@@ -43,7 +56,31 @@ const DisplayEvents = ({ event }) => {
         querySnapShot.forEach((doc) => {
           userDetails = { ...doc.data() };
         });
-        setEventDetails({ ...event, ...userDetails, attendees: 0 });
+        const joinQuery = query(
+          collection(db, "meet_attendes"),
+          where("user_name", "==", userInfo.user_name)
+        );
+        const joinQuerySnapShot = await getDocs(joinQuery);
+        let listOfEventsJoined = [];
+        joinQuerySnapShot.forEach((doc) => {
+          listOfEventsJoined.push(doc.data().eventId);
+        });
+        const newJoinSet = new Set(listOfEventsJoined);
+        const attendesQuery = query(
+          collection(db, "meet_attendes"),
+          where("eventId", "==", event.eventId)
+        );
+        let attendesQuerySnapShot = await getDocs(attendesQuery);
+        let numberOfAttendes = 0;
+        attendesQuerySnapShot.forEach(() => {
+          numberOfAttendes += 1;
+        });
+        setJoinInfo(newJoinSet);
+        setEventDetails({
+          ...event,
+          ...userDetails,
+          attendees: numberOfAttendes,
+        });
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -59,6 +96,38 @@ const DisplayEvents = ({ event }) => {
         `https://www.google.com/maps/search/${encodedQuery}`,
         "_blank"
       );
+    }
+  };
+
+  const handleEventParticipation = async (id) => {
+    // without login nobody can join or leave the event.
+
+    if (joinInfo.has(id)) {
+      const newJoinSet = new Set(joinInfo);
+      newJoinSet.delete(id);
+      const deleteQuery = query(
+        collection(db, "meet_attendes"),
+        where("user_name", "==", userInfo.user_name),
+        where("eventId", "==", id)
+      );
+      const deleteQuerySnapShot = await getDocs(deleteQuery);
+      if (!deleteQuerySnapShot.empty) {
+        let documentSnapshot = deleteQuerySnapShot.docs[0];
+        const documentRef = doc(db, "meet_attendes", documentSnapshot.id);
+        await deleteDoc(documentRef);
+        toast.error("Opt out of event", { duration: 1500 });
+      }
+      setJoinInfo(newJoinSet);
+    } else {
+      const newJoinSet = new Set(joinInfo);
+      newJoinSet.add(id);
+      addDoc(collection(db, "meet_attendes"), {
+        eventId: id,
+        user_name: userInfo.user_name,
+      })
+        .then(() => toast.success("Event Joined !!!"))
+        .catch((err) => console.log(err));
+      setJoinInfo(newJoinSet);
     }
   };
 
@@ -205,7 +274,7 @@ const DisplayEvents = ({ event }) => {
               <div className="flex items-center gap-2 text-gray-600">
                 <FaMapMarkerAlt className="text-red-500" />
                 <span
-                  className="hover:underline hover:cursor-pointer"
+                  className="hover:underline hover:cursor-pointer font-bold"
                   onClick={() =>
                     handleSearchOnGoogleMap(eventDetails.eventLocation)
                   }
@@ -216,20 +285,24 @@ const DisplayEvents = ({ event }) => {
 
               <div className="flex items-center gap-2 text-gray-600">
                 <FaUserFriends className="text-green-500" />
-                <span>{eventDetails.attendees?.length || 0} people joined</span>
+                <span>{eventDetails.attendees} people joined</span>
               </div>
             </div>
             {location.pathname !== "/profile" &&
               timeDiffEndTimeToToday(eventDetails.eventEndTime) > 0 && (
                 <button
-                  onClick={() => setIsJoined(!isJoined)}
+                  onClick={() => {
+                    handleEventParticipation(eventDetails.eventId);
+                  }}
                   className={`w-full py-3 rounded-lg font-semibold mb-4 ${
-                    isJoined
+                    joinInfo.has(eventDetails.eventId)
                       ? "bg-red-100 text-red-600 hover:bg-red-200"
                       : "bg-blue-500 text-white hover:bg-blue-600"
                   }`}
                 >
-                  {isJoined ? "Leave Event" : "Join Event"}
+                  {joinInfo.has(eventDetails.eventId)
+                    ? "Leave Event"
+                    : "Join Event"}
                 </button>
               )}
             <div>
