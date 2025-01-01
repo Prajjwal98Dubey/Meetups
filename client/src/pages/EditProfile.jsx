@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { FaCamera, FaMapMarkerAlt, FaBriefcase } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,13 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useContext(UserInfoContext);
 
+  useEffect(() => {
+    if (userInfo.user_name === "Guest") {
+      toast.error("Guest cannot edit Profile");
+      navigate("/");
+      return;
+    }
+  }, [navigate, userInfo.user_name]);
   const handleEditProfile = async () => {
     try {
       const q = query(

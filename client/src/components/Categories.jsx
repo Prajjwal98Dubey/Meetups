@@ -109,7 +109,7 @@ const Categories = () => {
             {categories.map((category, index) => (
               <Link
                 key={index}
-                to={`/feeds?category=${category.name.toLowerCase()}`}
+                to={`/feeds?category=${category.formatString.toLowerCase()}`}
                 className="flex-shrink-0 group cursor-pointer transform hover:scale-105 transition-all duration-300"
               >
                 <div onClick={() => setSelectedCategory(category.formatString)}>

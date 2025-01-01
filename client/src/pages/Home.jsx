@@ -9,14 +9,13 @@ const Home = () => {
       <Navbar />
       <Categories />
       <HomePageImage />
-      <footer className="mt-auto bg-gradient-to-r from-gray-900 to-gray-800 text-white/80">
+      <footer className=" bg-gradient-to-r from-gray-900 to-gray-800 text-white/80">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-center md:text-left">
               <h3 className="font-bold text-xl bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
                 LinkUp
               </h3>
-              <p className="text-sm mt-1">Created by Prajjwal Dubey</p>
             </div>
 
             <div className="flex gap-4">
@@ -41,7 +40,8 @@ const Home = () => {
             <div className="text-center md:text-right">
               <p className="text-sm text-yellow-400">⚠️ Testing Version</p>
               <p className="text-xs mt-1">
-                This application is under development, all the posts and events does not hold true.
+                This application is under development, all the posts and events
+                does not hold true.
               </p>
             </div>
           </div>

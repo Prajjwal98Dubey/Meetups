@@ -1,17 +1,26 @@
 import { FaLock, FaGoogle, FaEnvelope } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { googleSignIn, loginUser } from "../firebase/authentication";
 import toast from "react-hot-toast";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { AUTH_LOADER_ICON } from "../icons/icons";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/firebaseConfig";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingGuest, setIsLoadingGuest] = useState(false);
   const navigate = useNavigate();
-  const { setUserInfo } = useContext(UserInfoContext);
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
+  useEffect(() => {
+    if (Object.keys(userInfo).length !== 0) {
+      navigate(-1);
+      return
+    }
+  }, [navigate, userInfo]);
 
   const handleLoginUser = async (e) => {
     e.preventDefault();
@@ -25,6 +34,21 @@ const Login = () => {
     } catch {
       setIsLoading(false);
       toast.error("Invalid Credentials", { duration: 1500 });
+    }
+  };
+  const handleGuestLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        "guest123@gmail.com",
+        import.meta.env.VITE_GUEST_PASSWORD
+      );
+      setUserInfo({ user_name: "Guest", user_email: "guest123@gmail.com" });
+      setIsLoadingGuest(false);
+      navigate("/");
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -82,6 +106,27 @@ const Login = () => {
                   </div>
                 )}
                 <p className="m-1">Sign In</p>
+              </div>
+            </button>
+            <button
+              onClick={handleGuestLogin}
+              className={`w-full ${
+                isLoadingGuest
+                  ? "bg-gray-500"
+                  : "bg-gradient-to-r from-blue-500 to-purple-600"
+              } text-white py-3 rounded-lg font-semibold shadow-lg hover:opacity-90 transition-all`}
+            >
+              <div className="flex justify-center">
+                {isLoadingGuest && (
+                  <div className="flex justify-center items-center m-1">
+                    <img
+                      src={AUTH_LOADER_ICON}
+                      alt="loading"
+                      className="w-[20px] h-[20px] animate-spin"
+                    />
+                  </div>
+                )}
+                <p className="m-1">Guest Login</p>
               </div>
             </button>
 

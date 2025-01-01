@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -12,10 +12,17 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUserInfo } = useContext(UserInfoContext);
+  const { userInfo, setUserInfo } = useContext(UserInfoContext);
   const navigate = useNavigate();
+  useEffect(() => {
+    if (Object.keys(userInfo).length !== 0) {
+      navigate(-1);
+    }
+  }, [userInfo, navigate]);
   const handleRegisterUser = async (e) => {
     e.preventDefault();
+    if (userName.toLowerCase() === "Guest")
+      return toast("Don't use Guest as UserName");
     if (!email || !password || !userName || !confirmPassword)
       return toast.error("Enter all Mandotory fields...", { duration: 1500 });
     if (password !== confirmPassword)

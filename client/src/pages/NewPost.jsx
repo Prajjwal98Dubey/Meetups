@@ -40,6 +40,16 @@ const NewPost = () => {
   const { postsInfo, setPostsInfo } = useContext(PostsContext);
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
   useEffect(() => {
+    if (userInfo.user_name === "Guest") {
+      toast.error("Guest cannot post");
+      navigate("/");
+      return;
+    }
+    if (Object.keys(userInfo) === 0) {
+      navigate("/login");
+    }
+  }, [navigate, userInfo, userInfo.user_name]);
+  useEffect(() => {
     const getEventLocation = async () => {
       if (!eventLocation) {
         setLocationSuggestions([]);

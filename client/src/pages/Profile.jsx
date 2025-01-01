@@ -30,7 +30,6 @@ const Profile = () => {
   const { filterValue, setFilterValue } = useContext(FilterValueContext);
   const { setSelectedCategory } = useContext(CategoryInfoContext);
   const { followInfo } = useContext(FollowInfoContext);
-
   useEffect(() => {
     const getUserPosts = async () => {
       const q = query(
