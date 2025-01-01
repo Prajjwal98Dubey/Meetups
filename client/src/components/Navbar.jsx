@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className="h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-4">
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur group-hover:blur-md transition-all"></div>
+              {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur group-hover:blur-md transition-all"></div> */}
               <div className="relative bg-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 text-wrap">
                 LU
               </div>

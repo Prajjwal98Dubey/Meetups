@@ -1,5 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
+import ALTERNATE_IMG from "../icons/alternate_img.webp";
 
 // all feeds containing events and posts as well.
 export const feedsPosts = async (category) => {
@@ -76,4 +77,24 @@ export const handleSearchQuery = async (text) => {
   filteredEvents.sort((a, b) => b.createdAt - a.createdAt);
   searchResult = [...filterdUsers, ...filteredEvents];
   return searchResult;
+};
+
+export const prepopulateFeedsImage = async (images) => {
+  let allImages = [];
+  images.forEach((image) => {
+    let currImage = new Image();
+    currImage.src = image;
+    allImages.push(
+      new Promise((res, rej) => {
+        currImage.onload = () => {
+          res(currImage.src);
+        };
+        currImage.onerror = () => {
+          rej(ALTERNATE_IMG);
+        };
+      })
+    );
+  });
+  let preLoadedImages = await Promise.all(allImages);
+  return preLoadedImages;
 };

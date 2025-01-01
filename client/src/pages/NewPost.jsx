@@ -197,7 +197,7 @@ const NewPost = () => {
                     }`}
                     onClick={() => setIsEvent(true)}
                   >
-                    Event Post
+                    Schedule New Event
                   </button>
                 </div>
 

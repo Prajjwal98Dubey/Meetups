@@ -9,6 +9,7 @@ import FeedsContextProvider from "./contexts/FeedsContextProvider.jsx";
 import CategoryInfoContextProvider from "./contexts/CategoryInfoContextProvider.jsx";
 import JoinEventInfoProvider from "./contexts/JoinEventInfoProvider.jsx";
 import FollowInfoContextProvider from "./contexts/FollowInfoContextProvider.jsx";
+import UserLocationInfoProvider from "./contexts/UserLocationInfoProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <UserInfoContextProvider>
@@ -19,7 +20,9 @@ createRoot(document.getElementById("root")).render(
             <CategoryInfoContextProvider>
               <JoinEventInfoProvider>
                 <FollowInfoContextProvider>
-                  <App />
+                  <UserLocationInfoProvider>
+                    <App />
+                  </UserLocationInfoProvider>
                 </FollowInfoContextProvider>
               </JoinEventInfoProvider>
             </CategoryInfoContextProvider>

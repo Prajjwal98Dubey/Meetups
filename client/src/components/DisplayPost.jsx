@@ -14,6 +14,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { getTimeStamp } from "../helpers/getFormattedTime";
 import { Link } from "react-router-dom";
+import { prepopulateFeedsImage } from "../helpers/feedsFunction";
+import DisplayPostLoader from "../shimmers/DIsplayPostLoader";
 
 const DisplayPost = ({ post }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -33,7 +35,8 @@ const DisplayPost = ({ post }) => {
         querySnapShot.forEach((doc) => {
           userDetails = { ...doc.data() };
         });
-        setPostDetails({ ...post, ...userDetails });
+        let preLoadedImages = await prepopulateFeedsImage(post.images);
+        setPostDetails({ ...post, images: preLoadedImages, ...userDetails });
         setIsLoading(false);
       } catch (error) {
         console.log(error);
@@ -45,9 +48,7 @@ const DisplayPost = ({ post }) => {
   return (
     <>
       {isLoading ? (
-        <div className="font-bold text-2xl font-roboto text-[#313131]">
-          Loading...
-        </div>
+        <DisplayPostLoader />
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-2 font-roboto">
           <div className="flex items-center justify-between p-4">

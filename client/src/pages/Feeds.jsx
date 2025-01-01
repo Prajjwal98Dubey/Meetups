@@ -67,7 +67,10 @@ const Feeds = () => {
 
         <div className="mt-6 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
           {categories.map((category) => (
-            <Link key={category.name} to={`/feeds?category=${category.name}`}>
+            <Link
+              key={category.name}
+              to={`/feeds?category=${category.name.toLowerCase()}`}
+            >
               <button
                 onClick={() => {
                   setFeedsInfo([]);
