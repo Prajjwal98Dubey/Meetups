@@ -20,6 +20,7 @@ import DisplayEvents from "../components/DisplayEvents";
 import FilterValueContext from "../contexts/FIlterValueContext";
 import { signOut } from "firebase/auth";
 import CategoryInfoContext from "../contexts/CategoryInfoContext";
+import FollowInfoContext from "../contexts/FollowInfoContext";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Profile = () => {
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
   const { filterValue, setFilterValue } = useContext(FilterValueContext);
   const { setSelectedCategory } = useContext(CategoryInfoContext);
+  const { followInfo } = useContext(FollowInfoContext);
 
   useEffect(() => {
     const getUserPosts = async () => {
@@ -61,7 +63,7 @@ const Profile = () => {
     if (eventsInfo.length === 0) {
       getUsersEvents();
     }
-  }, [userInfo.user_email]);
+  }, [eventsInfo.length, postsInfo.length, userInfo.user_email]);
 
   const handleLogOut = () => {
     signOut(auth)
@@ -104,11 +106,11 @@ const Profile = () => {
               <div className="flex-1 mt-16 sm:mt-0">
                 <div className="flex flex-wrap justify-between items-center">
                   <div>
-                    <h1 className="text-3xl font-bold">
+                    <h1 className="lg:text-3xl text-xl font-bold">
                       {userInfo.user_name ? userInfo.user_name : ""}
                     </h1>
                     {userInfo.user_profession && (
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 sm:text-[15px]">
                         {userInfo.user_profession}
                       </p>
                     )}
@@ -147,11 +149,11 @@ const Profile = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Followers</span>
-                  <span className="font-semibold">14.3K</span>
+                  <span className="font-semibold">{followInfo.follower}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Following</span>
-                  <span className="font-semibold">892</span>
+                  <span className="font-semibold">{followInfo.following}</span>
                 </div>
               </div>
             </div>
@@ -173,7 +175,7 @@ const Profile = () => {
           <div className="lg:col-span-6">
             <div className="bg-white rounded-xl shadow-sm mb-3">
               <div className="flex overflow-x-auto">
-                <button className="flex-1 px-6 py-4 text-red-500 font-extrabold text-xl cursor-default">
+                <button className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-700 bg-clip-text text-transparent font-extrabold text-xl cursor-default">
                   Timeline
                 </button>
               </div>

@@ -17,6 +17,7 @@ import { FaMapMarkerAlt, FaEnvelope, FaArrowLeft } from "react-icons/fa";
 import DisplayPost from "../components/DisplayPost";
 import DisplayEvents from "../components/DisplayEvents";
 import UserInfoContext from "../contexts/UserInfoContext";
+import FollowInfoContext from "../contexts/FollowInfoContext";
 
 const StalkUser = () => {
   const [posts, setPosts] = useState([]);
@@ -25,6 +26,9 @@ const StalkUser = () => {
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followers, setFollowers] = useState(0);
+  const [following, setFollowing] = useState(0);
+  const { followInfo, setFollowInfo } = useContext(FollowInfoContext);
   const navigate = useNavigate();
   const { userInfo } = useContext(UserInfoContext);
   const location = useLocation();
@@ -75,6 +79,45 @@ const StalkUser = () => {
     getUserDetails();
   }, [location.pathname, userInfo.user_email]);
 
+  useEffect(() => {
+    const getCurrUserFollowInfo = async () => {
+      const url = location.pathname.split("/");
+      const currUser = url[url.length - 1].split("-").join(" ");
+      const userQuery = query(
+        collection(db, "meet_users"),
+        where("user_name", "==", currUser)
+      );
+      const userQuerySnapShot = await getDocs(userQuery);
+      let currUserDetails = {};
+      let currUserFollowers = 0;
+      let currUserFollowing = 0;
+      userQuerySnapShot.forEach((doc) => {
+        currUserDetails = { ...doc.data() };
+      });
+      // how many people i am following !!!
+      const followerQuery = query(
+        collection(db, "meet_follower_following"),
+        where("follower", "==", currUserDetails.user_email)
+      );
+      const followerQuerySnapShot = await getDocs(followerQuery);
+      followerQuerySnapShot.forEach(() => {
+        currUserFollowing += 1;
+      });
+      // how many people following me !!!
+      const followingQuery = query(
+        collection(db, "meet_follower_following"),
+        where("following", "==", currUserDetails.user_name)
+      );
+      const followingQuerySnapShot = await getDocs(followingQuery);
+      followingQuerySnapShot.forEach(() => {
+        currUserFollowers += 1;
+      });
+      setFollowers(currUserFollowers);
+      setFollowing(currUserFollowing);
+    };
+    getCurrUserFollowInfo();
+  }, [location.pathname]);
+
   const handleFollow = async () => {
     if (isFollowing) {
       const followerQuery = query(
@@ -86,6 +129,7 @@ const StalkUser = () => {
       const querySnapShot = await getDocs(followerQuery);
       if (querySnapShot.empty) return;
       deleteDoc(doc(db, "meet_follower_following", querySnapShot.docs[0].id));
+      setFollowInfo({ ...followInfo, following: followInfo.following - 1 });
       setIsFollowing(false);
     } else {
       await addDoc(collection(db, "meet_follower_following"), {
@@ -96,6 +140,7 @@ const StalkUser = () => {
           .split("-")
           .join(" "),
       });
+      setFollowInfo({ ...followInfo, following: followInfo.following + 1 });
       setIsFollowing(true);
     }
   };
@@ -127,7 +172,7 @@ const StalkUser = () => {
                     <div className="flex-1 mt-16 sm:mt-0">
                       <div className="flex flex-wrap justify-between items-center">
                         <div>
-                          <h1 className="text-3xl font-bold">
+                          <h1 className="lg:text-3xl md:text-xl sm:text-[17px] font-bold">
                             {user.user_name ? user.user_name : ""}
                           </h1>
                           {user.user_profession && (
@@ -169,11 +214,11 @@ const StalkUser = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Followers</span>
-                        <span className="font-semibold">14.3K</span>
+                        <span className="font-semibold">{followers}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Following</span>
-                        <span className="font-semibold">892</span>
+                        <span className="font-semibold">{following}</span>
                       </div>
                     </div>
                   </div>
@@ -194,7 +239,7 @@ const StalkUser = () => {
                 <div className="lg:col-span-6">
                   <div className="bg-white rounded-xl shadow-sm mb-3">
                     <div className="flex overflow-x-auto">
-                      <button className="flex-1 px-6 py-4 text-red-500 font-extrabold text-xl cursor-default">
+                      <button className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-700 bg-clip-text text-transparent font-extrabold text-xl cursor-default">
                         Timeline
                       </button>
                     </div>
