@@ -98,3 +98,42 @@ export const prepopulateFeedsImage = async (images) => {
   let preLoadedImages = await Promise.all(allImages);
   return preLoadedImages;
 };
+
+export const getAllStories = async () => {
+  const storyQuery = query(collection(db, "meet_story"));
+  let storyQuerySnapShot = await getDocs(storyQuery);
+  let storiesDetails = [];
+  storyQuerySnapShot.forEach((doc) => {
+    storiesDetails.push(doc.data());
+  });
+  let storiesWithUserDetails = [];
+  storiesDetails.forEach((s) => {
+    storiesWithUserDetails.push(
+      new Promise((res, rej) => {
+        const userQuery = query(
+          collection(db, "meet_users"),
+          where("user_name", "==", s.user_name)
+        );
+        getDocs(userQuery)
+          .then((response) => {
+            let userQuerySnapShot = response;
+            userQuerySnapShot.forEach((doc) => {
+              res({
+                ...s,
+                user_name: doc.data().user_name,
+                user_photo: doc.data().user_photo,
+              });
+            });
+          })
+          .catch((err) => rej(err));
+      })
+    );
+  });
+  let finalStoriesAndUserDetails = await Promise.all(storiesWithUserDetails);
+  if (finalStoriesAndUserDetails.length === 0) {
+    finalStoriesAndUserDetails.push({ isEmpty: true });
+  } else {
+    finalStoriesAndUserDetails.push({ isEmpty: false });
+  }
+  return finalStoriesAndUserDetails;
+};

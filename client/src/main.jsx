@@ -10,6 +10,7 @@ import CategoryInfoContextProvider from "./contexts/CategoryInfoContextProvider.
 import JoinEventInfoProvider from "./contexts/JoinEventInfoProvider.jsx";
 import FollowInfoContextProvider from "./contexts/FollowInfoContextProvider.jsx";
 import UserLocationInfoProvider from "./contexts/UserLocationInfoProvider.jsx";
+import StoryInfoContextProvider from "./contexts/StoryInfoContextProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
   <UserInfoContextProvider>
@@ -21,7 +22,9 @@ createRoot(document.getElementById("root")).render(
               <JoinEventInfoProvider>
                 <FollowInfoContextProvider>
                   <UserLocationInfoProvider>
-                    <App />
+                    <StoryInfoContextProvider>
+                      <App />
+                    </StoryInfoContextProvider>
                   </UserLocationInfoProvider>
                 </FollowInfoContextProvider>
               </JoinEventInfoProvider>
