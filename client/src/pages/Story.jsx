@@ -1,19 +1,37 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaMapMarkerAlt, FaTimes } from "react-icons/fa";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DEFAULT_USER from "../icons/default_user.png";
 import StoryContextInfo from "../contexts/StoryInfoContext";
 const Story = () => {
-  const [currentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParam] = useSearchParams();
   const [storyIndex, setStoryIndex] = useState(0);
   const { storyInfo } = useContext(StoryContextInfo);
   const navigate = useNavigate();
+  const intervalRef = useRef(null);
   useEffect(() => {
     setStoryIndex(parseInt(searchParam.get("id")));
     setIsLoading(false);
   }, [searchParam]);
+  useEffect(() => {
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setCurrentImageIndex((prev) => prev + 1);
+      }, 2000);
+    }
+  }, [storyIndex]);
+
+  if (currentImageIndex === storyInfo[storyIndex].story_images.length) {
+    clearInterval(intervalRef.current);
+    if (storyIndex === storyInfo.length - 2) return navigate("/feeds");
+    setStoryIndex((prev) => prev + 1);
+    setCurrentImageIndex(0);
+    intervalRef.current = null;
+    return;
+  }
+
   return (
     <>
       {!isLoading && (
@@ -22,6 +40,7 @@ const Story = () => {
             <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/60 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
+                  {console.log("story index", storyIndex)}
                   <img
                     src={storyInfo[storyIndex].user_photo || DEFAULT_USER}
                     alt="user"
@@ -45,6 +64,7 @@ const Story = () => {
                 </button>
               </div>
             </div>
+
             <img
               src={storyInfo[storyIndex].story_images[currentImageIndex]}
               alt="Story"
