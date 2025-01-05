@@ -6,6 +6,7 @@ import StoryContextInfo from "../contexts/StoryInfoContext";
 const Story = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [trigger, setTrigger] = useState(false);
   const [searchParam] = useSearchParams();
   const [storyIndex, setStoryIndex] = useState(0);
   const { storyInfo } = useContext(StoryContextInfo);
@@ -19,13 +20,37 @@ const Story = () => {
     if (!intervalRef.current) {
       intervalRef.current = setInterval(() => {
         setCurrentImageIndex((prev) => prev + 1);
-      }, 2000);
+      }, 3000);
     }
-  }, [storyIndex]);
-
+  }, [storyIndex, trigger]);
+  const handleNextStory = (e) => {
+    if (
+      e.clientX >= document.body.clientWidth / 2 &&
+      e.clientY >= document.body.clientHeight / 2
+    ) {
+      if (currentImageIndex === storyInfo[storyIndex].story_images.length) {
+        clearInterval(intervalRef.current);
+        if (storyIndex === storyInfo.length - 2) {
+          location.href = "http://localhost:5173/feeds";
+        } else {
+          setStoryIndex((prev) => prev + 1);
+          setCurrentImageIndex(0);
+          intervalRef.current = null;
+        }
+      } else {
+        setCurrentImageIndex((prev) => prev + 1);
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        setTrigger(!trigger);
+      }
+    }
+  };
   if (currentImageIndex === storyInfo[storyIndex].story_images.length) {
     clearInterval(intervalRef.current);
-    if (storyIndex === storyInfo.length - 2) return navigate("/feeds");
+    if (storyIndex === storyInfo.length - 2) {
+      location.href = "http://localhost:5173/feeds";
+      return;
+    }
     setStoryIndex((prev) => prev + 1);
     setCurrentImageIndex(0);
     intervalRef.current = null;
@@ -36,11 +61,19 @@ const Story = () => {
     <>
       {!isLoading && (
         <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-          <div className="relative w-full h-full md:w-[400px] md:h-[700px]">
+          {console.log(
+            "story index: ",
+            storyIndex + " currImageIndex: ",
+            currentImageIndex
+          )}
+          <div
+            className="relative w-full h-full md:w-[400px] md:h-[700px]"
+            id="story"
+            onClick={handleNextStory}
+          >
             <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/60 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  {console.log("story index", storyIndex)}
                   <img
                     src={storyInfo[storyIndex].user_photo || DEFAULT_USER}
                     alt="user"
