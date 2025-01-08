@@ -99,7 +99,7 @@ export const prepopulateFeedsImage = async (images) => {
   return preLoadedImages;
 };
 
-export const getAllStories = async (userEmail) => {
+export const getAllStories = async (userEmail, userName) => {
   let followingUsers = [];
   const followingQuery = query(
     collection(db, "meet_follower_following"),
@@ -110,10 +110,12 @@ export const getAllStories = async (userEmail) => {
     followingUsers.push(doc.data());
   });
   let filteredFollowingUsers = [];
+  filteredFollowingUsers.push(userName);
   followingUsers.forEach((f) => {
     filteredFollowingUsers.push(f.following);
   });
-  if (filteredFollowingUsers.length === 0) return [{ isEmpty: true }];
+
+  // if (filteredFollowingUsers.length === 0) return [{ isEmpty: true }];
 
   const storyQuery = query(
     collection(db, "meet_story"),
@@ -151,10 +153,37 @@ export const getAllStories = async (userEmail) => {
     );
   });
   let finalStoriesAndUserDetails = await Promise.all(storiesWithUserDetails);
-  if (finalStoriesAndUserDetails.length === 0) {
-    finalStoriesAndUserDetails.push({ isEmpty: true });
-  } else {
-    finalStoriesAndUserDetails.push({ isEmpty: false });
+  let currUserIndex = -1;
+  let sortedFinalStoriesAndUserDetails = [];
+  for (let i = 0; i < finalStoriesAndUserDetails.length; i++) {
+    if (finalStoriesAndUserDetails[i].user_name === userName) {
+      currUserIndex = i;
+      break;
+    }
   }
-  return finalStoriesAndUserDetails;
+  if (currUserIndex !== -1) {
+    let tmp1 = finalStoriesAndUserDetails.slice(0, currUserIndex);
+    let tmp2 = finalStoriesAndUserDetails.slice(
+      currUserIndex + 1,
+      finalStoriesAndUserDetails.length
+    );
+    let tmp = [...tmp1, ...tmp2];
+    tmp.sort((a, b) => b.story_post_time - a.story_post_time);
+    sortedFinalStoriesAndUserDetails = [
+      finalStoriesAndUserDetails[currUserIndex],
+      ...tmp,
+    ];
+  } else {
+    finalStoriesAndUserDetails.sort(
+      (a, b) => b.story_post_time - a.story_post_time
+    );
+    sortedFinalStoriesAndUserDetails = [...finalStoriesAndUserDetails];
+  }
+
+  if (sortedFinalStoriesAndUserDetails.length === 0) {
+    sortedFinalStoriesAndUserDetails.push({ isEmpty: true });
+  } else {
+    sortedFinalStoriesAndUserDetails.push({ isEmpty: false });
+  }
+  return sortedFinalStoriesAndUserDetails;
 };

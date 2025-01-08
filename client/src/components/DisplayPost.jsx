@@ -4,7 +4,6 @@ import {
   FaHeart,
   FaRegHeart,
   FaRegComment,
-  FaShare,
   FaChevronLeft,
   FaChevronRight,
   FaCalendarAlt,
@@ -73,9 +72,9 @@ const DisplayPost = ({ post }) => {
               </div>
             </Link>
 
-            <button className="text-gray-400 hover:text-gray-600">
+            {/* <button className="text-gray-400 hover:text-gray-600">
               <FaShare />
-            </button>
+            </button> */}
           </div>
           {postDetails.images && postDetails.images.length > 0 && (
             <div className="relative">

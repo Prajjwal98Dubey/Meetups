@@ -17,7 +17,6 @@ import {
   FaChevronRight,
   FaRegComment,
   FaUserFriends,
-  FaShare,
 } from "react-icons/fa";
 import { db } from "../firebase/firebaseConfig";
 import DEFAULT_USER from "../icons/default_user.png";
@@ -171,10 +170,10 @@ const DisplayEvents = ({ event }) => {
                     Ongoing
                   </span>
                 </div>
-
+                {/* 
                 <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
                   <FaShare className="w-4 h-4" />
-                </button>
+                </button> */}
               </div>
             )}
             {!isEventLive(
@@ -186,18 +185,18 @@ const DisplayEvents = ({ event }) => {
                   <div className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold text-sm px-4 py-1.5 rounded-full shadow-sm ">
                     Scheduled
                   </div>
-                  <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+                  {/* <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
                     <FaShare className="w-4 h-4" />
-                  </button>
+                  </button> */}
                 </div>
               ) : (
                 <div className="flex items-center gap-3 p-1.5">
                   <div className="bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold text-sm px-4 py-1.5 rounded-full shadow-sm ">
                     Ended
                   </div>
-                  <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+                  {/* <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
                     <FaShare className="w-4 h-4" />
-                  </button>
+                  </button> */}
                 </div>
               )
             ) : null}

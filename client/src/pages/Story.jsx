@@ -61,11 +61,6 @@ const Story = () => {
     <>
       {!isLoading && (
         <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-          {console.log(
-            "story index: ",
-            storyIndex + " currImageIndex: ",
-            currentImageIndex
-          )}
           <div
             className="relative w-full h-full md:w-[400px] md:h-[700px]"
             id="story"

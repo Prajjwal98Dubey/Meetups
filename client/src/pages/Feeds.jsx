@@ -42,7 +42,7 @@ const Feeds = () => {
       return;
     } else {
       if (Object.keys(storyInfo).length === 0) {
-        getAllStories(userInfo.user_email)
+        getAllStories(userInfo.user_email, userInfo.user_name)
           .then((res) => {
             setStoryInfo([...res]);
             setIsLoadingStory(false);
@@ -81,7 +81,13 @@ const Feeds = () => {
             storyInfo.slice(0, storyInfo.length - 1).map((story, index) => (
               <Link key={index} to={`/story?id=${index}`}>
                 <div className="flex-shrink-0">
-                  <div className="w-20 h-20 bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 rounded-full p-[2px]">
+                  <div
+                    className={`w-20 h-20 ${
+                      story.user_name === userInfo.user_name
+                        ? "bg-gradient-to-br from-blue-500 via-purple-500 to-green-500"
+                        : "bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500"
+                    } rounded-full p-[2px]`}
+                  >
                     <img
                       src={story.user_photo || DEFAULT_USER}
                       className="w-full h-full rounded-full object-cover border-2 border-white"
