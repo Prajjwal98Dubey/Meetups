@@ -99,15 +99,36 @@ export const prepopulateFeedsImage = async (images) => {
   return preLoadedImages;
 };
 
-export const getAllStories = async () => {
-  const storyQuery = query(collection(db, "meet_story"));
+export const getAllStories = async (userEmail) => {
+  let followingUsers = [];
+  const followingQuery = query(
+    collection(db, "meet_follower_following"),
+    where("follower", "==", userEmail)
+  );
+  const followingQuerySnapShot = await getDocs(followingQuery);
+  followingQuerySnapShot.forEach((doc) => {
+    followingUsers.push(doc.data());
+  });
+  let filteredFollowingUsers = [];
+  followingUsers.forEach((f) => {
+    filteredFollowingUsers.push(f.following);
+  });
+  if (filteredFollowingUsers.length === 0) return [{ isEmpty: true }];
+
+  const storyQuery = query(
+    collection(db, "meet_story"),
+    where("user_name", "in", filteredFollowingUsers)
+  );
   let storyQuerySnapShot = await getDocs(storyQuery);
   let storiesDetails = [];
   storyQuerySnapShot.forEach((doc) => {
     storiesDetails.push(doc.data());
   });
+  let filteredStoriesDetails = storiesDetails.filter(
+    (story) => story.story_post_time >= Date.now() - 24 * 60 * 60 * 1000
+  );
   let storiesWithUserDetails = [];
-  storiesDetails.forEach((s) => {
+  filteredStoriesDetails.forEach((s) => {
     storiesWithUserDetails.push(
       new Promise((res, rej) => {
         const userQuery = query(

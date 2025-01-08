@@ -42,7 +42,7 @@ const Feeds = () => {
       return;
     } else {
       if (Object.keys(storyInfo).length === 0) {
-        getAllStories()
+        getAllStories(userInfo.user_email)
           .then((res) => {
             setStoryInfo([...res]);
             setIsLoadingStory(false);

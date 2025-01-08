@@ -21,6 +21,7 @@ import FilterValueContext from "../contexts/FIlterValueContext";
 import { signOut } from "firebase/auth";
 import CategoryInfoContext from "../contexts/CategoryInfoContext";
 import FollowInfoContext from "../contexts/FollowInfoContext";
+import StoryContextInfo from "../contexts/StoryInfoContext";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const Profile = () => {
   const { eventsInfo, setEventsInfo } = useContext(EventsContext);
   const { filterValue, setFilterValue } = useContext(FilterValueContext);
   const { setSelectedCategory } = useContext(CategoryInfoContext);
+  const { setStoryInfo } = useContext(StoryContextInfo);
   const { followInfo } = useContext(FollowInfoContext);
   useEffect(() => {
     const getUserPosts = async () => {
@@ -71,6 +73,7 @@ const Profile = () => {
         setPostsInfo([]);
         setEventsInfo([]);
         setFilterValue("all");
+        setStoryInfo([]);
         setSelectedCategory("recent");
         navigate("/");
         if (localStorage.getItem("meet-auth"))
