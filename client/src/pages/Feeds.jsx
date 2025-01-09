@@ -50,8 +50,8 @@ const Feeds = () => {
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <Search />
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+      <div className="max-w-6xl mx-auto px-4 py-1">
+        <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide">
           {/* <div className="flex-shrink-0">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full p-[2px]">
               <Link to="/add-story">
@@ -87,7 +87,7 @@ const Feeds = () => {
           )} */}
         </div>
 
-        <div className="mt-6 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="mt-6 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
           {categories.map((category) => (
             <Link
               key={category.name}
@@ -115,7 +115,7 @@ const Feeds = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           {feedsInfo.length === 0 ? (
             <div className="flex justify-center items-center p-2">

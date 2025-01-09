@@ -1,13 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import {
-  FaHeart,
-  FaRegHeart,
-  FaRegComment,
-  FaChevronLeft,
-  FaChevronRight,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaCalendarAlt } from "react-icons/fa";
 import DEFAULT_USER from "../icons/default_user.png";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
@@ -18,7 +11,6 @@ import DisplayPostShimmer from "./DisplayPostShimmer";
 
 const DisplayPost = ({ post }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
   const [postDetails, setPostDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -120,10 +112,10 @@ const DisplayPost = ({ post }) => {
           )}
 
           <div className="p-4">
-            <p className="text-gray-800 mb-4">{postDetails.caption}</p>
+            <p className="text-gray-800 mb-2">{postDetails.caption}</p>
 
             {postDetails.isEvent && (
-              <div className="bg-blue-50 rounded-lg p-4 mb-4">
+              <div className="bg-blue-50 rounded-lg p-4 mb-2">
                 <div className="flex items-center gap-2 text-blue-600 mb-2">
                   <FaCalendarAlt />
                   <span className="font-semibold">{postDetails.eventName}</span>
@@ -133,7 +125,7 @@ const DisplayPost = ({ post }) => {
                 </p>
               </div>
             )}
-
+            {/* 
             <div className="flex items-center gap-6 pt-4 border-t">
               <button
                 onClick={() => setIsLiked(!isLiked)}
@@ -150,7 +142,7 @@ const DisplayPost = ({ post }) => {
                 <FaRegComment />
                 <span>{postDetails.comments?.length || 0}</span>
               </button>
-            </div>
+            </div> */}
             {postDetails.comments && postDetails.comments.length > 0 && (
               <div className="mt-4 space-y-2">
                 {postDetails.comments.slice(0, 2).map((comment, idx) => (

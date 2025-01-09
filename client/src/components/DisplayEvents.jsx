@@ -15,7 +15,6 @@ import {
   FaCalendarAlt,
   FaChevronLeft,
   FaChevronRight,
-  FaRegComment,
   FaUserFriends,
 } from "react-icons/fa";
 import { db } from "../firebase/firebaseConfig";
@@ -34,7 +33,6 @@ import DisplayPostShimmer from "./DisplayPostShimmer";
 
 const DisplayEvents = ({ event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showComments, setShowComments] = useState(false);
   const [eventDetails, setEventDetails] = useState({});
   const { joinInfo, setJoinInfo } = useContext(JoinEventInfo);
   const { userInfo } = useContext(UserInfoContext);
@@ -246,7 +244,7 @@ const DisplayEvents = ({ event }) => {
               </p>
             )}
 
-            <div className="space-y-3 mb-6">
+            <div className="space-y-3 mb-2">
               <div className="flex items-center gap-2 text-gray-600">
                 <FaCalendarAlt className="text-blue-500" />
                 <div className="flex w-fit p-1">
@@ -295,7 +293,7 @@ const DisplayEvents = ({ event }) => {
                     : "Join Event"}
                 </button>
               )}
-            <div>
+            {/* <div>
               <button
                 onClick={() => setShowComments(!showComments)}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
@@ -337,7 +335,7 @@ const DisplayEvents = ({ event }) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       )}
