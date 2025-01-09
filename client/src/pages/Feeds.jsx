@@ -7,9 +7,9 @@ import {
   FaPlus,
   FaVolleyballBall,
 } from "react-icons/fa";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useEffect } from "react";
-import { feedsPosts, getAllStories } from "../helpers/feedsFunction";
+import { feedsPosts } from "../helpers/feedsFunction";
 import FeedsContext from "../contexts/FeedsContext";
 import DisplayEvents from "../components/DisplayEvents";
 import DisplayPost from "../components/DisplayPost";
@@ -17,16 +17,11 @@ import Search from "../components/Search";
 import { Link, useNavigate } from "react-router-dom";
 import CategoryInfoContext from "../contexts/CategoryInfoContext";
 import UserInfoContext from "../contexts/UserInfoContext";
-import DEFAULT_USER from "../icons/default_user.png";
-import StoryContextInfo from "../contexts/StoryInfoContext";
-import StoryShimmer from "../components/StoryShimmer";
 import DisplayPostShimmer from "../components/DisplayPostShimmer";
 const Feeds = () => {
   const { feedsInfo, setFeedsInfo } = useContext(FeedsContext);
   const { selectedCategory, setSelectedCategory } =
     useContext(CategoryInfoContext);
-  const { storyInfo, setStoryInfo } = useContext(StoryContextInfo);
-  const [isLoadingStory, setIsLoadingStory] = useState(true);
   const navigate = useNavigate();
 
   const categories = [
@@ -42,17 +37,8 @@ const Feeds = () => {
     if (Object.keys(userInfo).length === 0) {
       navigate("/login");
       return;
-    } else {
-      if (Object.keys(storyInfo).length === 0) {
-        getAllStories(userInfo.user_email, userInfo.user_name)
-          .then((res) => {
-            setStoryInfo([...res]);
-            setIsLoadingStory(false);
-          })
-          .catch((err) => console.log(err));
-      } else setIsLoadingStory(false);
     }
-  }, [navigate, storyInfo, userInfo]);
+  }, [navigate, userInfo]);
   useEffect(() => {
     const getFeeds = async () => {
       let feeds = await feedsPosts(selectedCategory.trim().toLowerCase());
@@ -66,7 +52,7 @@ const Feeds = () => {
       <Search />
       <div className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-          <div className="flex-shrink-0">
+          {/* <div className="flex-shrink-0">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full p-[2px]">
               <Link to="/add-story">
                 <button className="w-full h-full bg-white rounded-full flex items-center justify-center">
@@ -75,9 +61,9 @@ const Feeds = () => {
               </Link>
             </div>
             <p className="text-xs text-center mt-1">Add Story</p>
-          </div>
+          </div> */}
 
-          {isLoadingStory ? (
+          {/* {isLoadingStory ? (
             <StoryShimmer />
           ) : (
             storyInfo.slice(0, storyInfo.length - 1).map((story, index) => (
@@ -98,7 +84,7 @@ const Feeds = () => {
                 </div>
               </Link>
             ))
-          )}
+          )} */}
         </div>
 
         <div className="mt-6 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">

@@ -46,10 +46,11 @@ const Story = () => {
       }
     }
   };
-  if (
-    storyIndex < storyInfo.length - 1 &&
-    storyInfo[storyIndex].story_images.length === 0
-  ) {
+  if (storyIndex === storyInfo.length - 1) {
+    return navigate(-1);
+  }
+
+  if (storyInfo[storyIndex].story_images.length === 0) {
     setTimeout(() => {
       setStoryIndex((prev) => prev + 1);
       clearInterval(intervalRef.current);
@@ -88,12 +89,14 @@ const Story = () => {
         <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
           <div
             className={`relative w-full h-full md:w-[400px] md:h-[700px] ${
+              storyIndex < storyInfo.length - 1 &&
               storyInfo[storyIndex].story_images.length === 0 &&
               "border border-gray-300 rounded-md shadow-sm shadow-gray-200"
             }`}
             id="story"
             onClick={handleNextStory}
           >
+            {console.log("story index", storyIndex)}
             <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/60 to-transparent">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -120,15 +123,17 @@ const Story = () => {
               </div>
             </div>
 
-            {storyInfo[storyIndex].story_images.length > 0 && (
-              <img
-                src={storyInfo[storyIndex].story_images[currentImageIndex]}
-                alt="Story"
-                className="w-full h-full object-cover"
-              />
-            )}
+            {storyIndex < storyInfo.length - 1 &&
+              storyInfo[storyIndex].story_images.length > 0 && (
+                <img
+                  src={storyInfo[storyIndex].story_images[currentImageIndex]}
+                  alt="Story"
+                  className="w-full h-full object-cover"
+                />
+              )}
             <div
               className={`absolute ${
+                storyIndex < storyInfo.length - 1 &&
                 storyInfo[storyIndex].story_images.length > 0
                   ? "bottom-0 left-0 right-0"
                   : "bottom-1/2 left-0 right-0"
@@ -137,6 +142,7 @@ const Story = () => {
               {storyInfo[storyIndex].story_caption && (
                 <p
                   className={`text-white ${
+                    storyIndex < storyInfo.length - 1 &&
                     storyInfo[storyIndex].story_images.length > 0
                       ? "text-sm m-1"
                       : "text-lg m-2"
@@ -148,6 +154,7 @@ const Story = () => {
               {storyInfo[storyIndex].story_location && (
                 <div
                   className={`flex items-center gap-1 text-white/80 hover:underline cursor-pointer w-fit h-fit ${
+                    storyIndex < storyInfo.length - 1 &&
                     storyInfo[storyIndex].story_images.length > 0
                       ? "text-sm mt-1 mb-1"
                       : "text-md mt-3 mb-3"

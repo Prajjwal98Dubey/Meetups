@@ -26,7 +26,6 @@ import {
   timeDiffEndTimeToToday,
 } from "../helpers/getFormattedTime";
 import { Link, useLocation } from "react-router-dom";
-import { trimEventLocationString } from "../helpers/userLocation";
 import { useContext } from "react";
 import JoinEventInfo from "../contexts/JoinEventInfo";
 import UserInfoContext from "../contexts/UserInfoContext";
@@ -270,7 +269,7 @@ const DisplayEvents = ({ event }) => {
                     handleSearchOnGoogleMap(eventDetails.eventLocation)
                   }
                 >
-                  {trimEventLocationString(eventDetails.eventLocation)}
+                  {eventDetails.eventLocation.split(",")[0]}
                 </span>
               </div>
 

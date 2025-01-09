@@ -1,5 +1,5 @@
 import { useState, useRef, useContext } from "react";
-import { FaArrowLeft, FaCamera, FaImage } from "react-icons/fa";
+import { FaArrowLeft, FaImage } from "react-icons/fa";
 import { nanoid } from "nanoid";
 import UserInfoContext from "../contexts/UserInfoContext";
 import { db, storage } from "../firebase/firebaseConfig";
@@ -101,6 +101,10 @@ const NewPost = () => {
         })
         .catch((err) => console.log(err));
     } else {
+      if (!eventTitle || !eventLocation || !startTime || !endTime)
+        return toast.error("Enter all Mandatory Fields.", { duration: 1500 });
+      if (new Date(endTime).getTime() - new Date(startTime).getTime() > 0)
+        return toast.error("invalid event time.", { duration: 1500 });
       let eventDetails = {
         eventId: nanoid(),
         eventHost: userInfo.user_email,
@@ -108,7 +112,7 @@ const NewPost = () => {
         eventDescription,
         eventLocation,
         isEvent,
-        eventCategory: eventCategory.toLowerCase(),
+        eventCategory: eventCategory ? eventCategories.toLowerCase() : "random",
         eventStartTime: startTime,
         eventEndTime: endTime,
         eventImages: images,
@@ -136,15 +140,6 @@ const NewPost = () => {
       });
     });
   };
-  const startCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-    } catch (err) {
-      console.error("Error accessing camera:", err);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="container mx-auto p-8">
@@ -376,12 +371,12 @@ const NewPost = () => {
                   />
 
                   <div className="flex justify-between">
-                    <button
+                    {/* <button
                       onClick={startCamera}
                       className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
                     >
                       <FaCamera /> Take Photo
-                    </button>
+                    </button> */}
                     {images.length > 0 && (
                       <button
                         onClick={() => setImages([])}
