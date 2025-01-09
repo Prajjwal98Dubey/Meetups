@@ -75,8 +75,8 @@ const Categories = () => {
   return (
     <>
       <div className="relative w-full py-4 px-4 md:px-8 overflow-hidden">
-        <div className="max-w-7xl lg:ml-[70px] ">
-          <div className="flex items-center justify-center">
+        <div className="w-full">
+          <div className="flex items-center justify-center mr-[3%]">
             <div
               className="relative flex items-center gap-2 px-6 py-2 rounded-full 
                           bg-white/10 backdrop-blur-md border border-white/20 

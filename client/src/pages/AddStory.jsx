@@ -29,6 +29,13 @@ const AddStory = () => {
     setImages((prev) => [...prev, ...newImages]);
   };
   useEffect(() => {
+    if (userInfo.user_name === "Guest") {
+      toast.error("Guest cannot post story.");
+      navigate("/");
+      return;
+    }
+  }, [navigate, userInfo.user_name]);
+  useEffect(() => {
     const suggestLocation = async () => {
       if (!location) {
         setLocationSuggestions([]);

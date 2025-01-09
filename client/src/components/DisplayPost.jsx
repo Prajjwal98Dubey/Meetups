@@ -14,6 +14,7 @@ import { db } from "../firebase/firebaseConfig";
 import { getTimeStamp } from "../helpers/getFormattedTime";
 import { Link } from "react-router-dom";
 import { prepopulateFeedsImage } from "../helpers/feedsFunction";
+import DisplayPostShimmer from "./DisplayPostShimmer";
 
 const DisplayPost = ({ post }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -46,8 +47,8 @@ const DisplayPost = ({ post }) => {
   return (
     <>
       {isLoading ? (
-        <div className="flex justify-center text-bold font-roboto">
-          Loading...
+        <div className="flex justify-center items-center">
+          <DisplayPostShimmer />
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-2 font-roboto">

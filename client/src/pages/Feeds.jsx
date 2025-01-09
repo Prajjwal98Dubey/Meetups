@@ -19,6 +19,8 @@ import CategoryInfoContext from "../contexts/CategoryInfoContext";
 import UserInfoContext from "../contexts/UserInfoContext";
 import DEFAULT_USER from "../icons/default_user.png";
 import StoryContextInfo from "../contexts/StoryInfoContext";
+import StoryShimmer from "../components/StoryShimmer";
+import DisplayPostShimmer from "../components/DisplayPostShimmer";
 const Feeds = () => {
   const { feedsInfo, setFeedsInfo } = useContext(FeedsContext);
   const { selectedCategory, setSelectedCategory } =
@@ -76,7 +78,7 @@ const Feeds = () => {
           </div>
 
           {isLoadingStory ? (
-            <div>Loading...</div>
+            <StoryShimmer />
           ) : (
             storyInfo.slice(0, storyInfo.length - 1).map((story, index) => (
               <Link key={index} to={`/story?id=${index}`}>
@@ -131,7 +133,11 @@ const Feeds = () => {
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           {feedsInfo.length === 0 ? (
             <div className="flex justify-center items-center p-2">
-              <p className="text-[#313131] text-2xl">No Events ...</p>
+              <DisplayPostShimmer />
+            </div>
+          ) : feedsInfo[feedsInfo.length - 1].isEmpty ? (
+            <div className="flex justify-center text-xl font-bold font-roboto">
+              No Events Yet...
             </div>
           ) : (
             feedsInfo.slice(0, feedsInfo.length - 1).map((feed) => {

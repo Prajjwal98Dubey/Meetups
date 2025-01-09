@@ -26,12 +26,12 @@ import {
   timeDiffEndTimeToToday,
 } from "../helpers/getFormattedTime";
 import { Link, useLocation } from "react-router-dom";
-import { AUTH_LOADER_ICON } from "../icons/icons";
 import { trimEventLocationString } from "../helpers/userLocation";
 import { useContext } from "react";
 import JoinEventInfo from "../contexts/JoinEventInfo";
 import UserInfoContext from "../contexts/UserInfoContext";
 import toast from "react-hot-toast";
+import DisplayPostShimmer from "./DisplayPostShimmer";
 
 const DisplayEvents = ({ event }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -133,12 +133,8 @@ const DisplayEvents = ({ event }) => {
   return (
     <>
       {isLoading ? (
-        <div className="flex justify-center items-center p-3">
-          <img
-            src={AUTH_LOADER_ICON}
-            alt="loader"
-            className="w-[30px] h-[30px] animate-spin "
-          />
+        <div className="flex justify-center items-center p-2">
+          <DisplayPostShimmer />
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-2">
@@ -170,10 +166,6 @@ const DisplayEvents = ({ event }) => {
                     Ongoing
                   </span>
                 </div>
-                {/* 
-                <button className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
-                  <FaShare className="w-4 h-4" />
-                </button> */}
               </div>
             )}
             {!isEventLive(
